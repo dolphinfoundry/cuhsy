@@ -15,8 +15,7 @@ $cushy_db_version = "1.0";
 define('CUSHY_BASE_URL', 'http://cushy.com');
 define('PLUGIN_PATH', '/wp-content/plugins/');
 define('PLUGIN_URL', plugin_dir_url( __FILE__ ));
-
-
+define('PLUGIN_NAME', 'cushy-master');
 
 function my_plugin_create_db() {
 
@@ -35,9 +34,8 @@ function my_plugin_create_db() {
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
     dbDelta( $sql );
 }
+
 register_activation_hook(__FILE__,'my_plugin_create_db');
-
-
 
 
 function cushy_install() {
@@ -109,7 +107,8 @@ function cushy_settings_menu(){
 }
 
 function include_cushy_js_file() {
-    wp_enqueue_script('cushy', PLUGIN_PATH . 'cushy/js/cushy.js', array(), '1.0.'.time(), true);
+    wp_enqueue_script('iframeResizer', PLUGIN_URL .'/js/iframeResizer.min.js', array(), '2.0.'.time(), true);
+    wp_enqueue_script('cushy', PLUGIN_URL .'/js/cushy.js', array(), '1.0.'.time(), true);
 }
 
 function cushy_settings(){
@@ -251,34 +250,35 @@ function cushy_settings(){
     <?php
 }
 
-function add_cushy_button() {
+function add_cushy_button()
+{
     ?>
 
-    <a href="<?php echo add_query_arg(array('action' => 'cushy_add', 'width' => '500'), admin_url('admin-ajax.php')); ?>" id="add-cushy-button"  class="button add_media thickbox" title="Add Cushy pictures to your story">Add a Cushy</a>
-
+    <a href="<?php
+    echo add_query_arg(array(
+        'action' => 'cushy_add',
+        'width' => '500'
+    ), admin_url('admin-ajax.php'));
+    ?>"
+       id="add-cushy-button" class="button add_media thickbox" title="Add Cushys to your story">Add a Cushy</a>
+    <input type="hidden" id="pluginPath" value="<?php
+    echo PLUGIN_URL;
+    ?>">
     <?php
 }
 
 add_action('media_buttons', 'add_cushy_button', 11);
 
 function include_cushy_button_js_file() {
-    wp_enqueue_style('cushy', PLUGIN_PATH . 'cushy/css/cushy.css', false, '1.0' . time());
-    wp_enqueue_script('cushy', PLUGIN_PATH . 'cushy/js/cushy.js', array(), '1.0.'.time(), true);
+    wp_enqueue_style('cushy', PLUGIN_PATH . PLUGIN_NAME . '/css/cushy.css', false, '1.0' . time());
+    wp_enqueue_script('cushy', PLUGIN_PATH . PLUGIN_NAME . '/js/cushy.js', array(), '1.0.'.time(), true);
 }
 
 add_action( 'wp_enqueue_media', 'include_cushy_button_js_file' );
 add_action( 'wp_ajax_cushy_add', 'cushy_add' );
 add_action( 'wp_ajax_nopriv_cushy_add', 'cushy_add' );
 
-function cushy_add_old(){
-    $cushy_auth = '<iframe id= "iframe" src="'.CUSHY_BASE_URL.'/sections/auth_cushy"  style="width: inherit;height:inherit"></iframe>';
-    echo $cushy_auth;
-}
-
 function cushy_add() {
-    $base_url = 'http://192.168.0.112/cushy_dev'; //'http://dev.cushy.com';
-    #$cushy_auth = '<div id="lists"><iframe id= "iframe" src="'.$base_url.'/sections/newlist"  style="width: 764px;height:373px"></iframe></div>';
-
     $get_cushy_access = getWpData();
     $user_name = (isset($get_cushy_access['user_name'])) ? $get_cushy_access['user_name'] : "";
     $security_key = (isset($get_cushy_access['security_key'])) ? $get_cushy_access['security_key'] : "";
@@ -482,7 +482,7 @@ function cushy_add() {
 }
 
 function include_iframe_js_file() {
-    wp_enqueue_script('iframeResizer', PLUGIN_PATH . 'cushy/js/iframeResizer.min.js', array(), '2.0.'.time(), true);
+    wp_enqueue_script('iframeResizer', PLUGIN_URL . '/js/iframeResizer.min.js', array(), '2.0.'.time(), true);
 }
 
 //add_action( 'wp_iframe_content', 'include_iframe_js_file' );

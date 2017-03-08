@@ -2,11 +2,9 @@
  * Created by Suman on 13/12/16.
  */
 
-
-
 jQuery(function($) {
     var isLocal = false;
-    var endpoint = (isLocal) ? 'dev.cushy.com' : 'cushy.com'; //192.168.0.105/cushy_dev
+    var endpoint = (isLocal) ? 'dev.cushy.com' : 'cushy.com';
     var apiBaseUrl = 'http://' + endpoint;
     var $this = $(document);
     var pluginUrl = $this.find('input#pluginPath').val();
@@ -17,48 +15,49 @@ jQuery(function($) {
     $this.addClass('cushy-media-modal media-modal');
     $this.find('a#add-cushy-button').html('<img src="'+ pluginUrl +'/assets/cushy-logo.png" alt="add cushy" style="width:18px; margin-top: -4px;" />Add Cushy');
 
-    iFrameResize({
-        log:false,
-        //maxHeight: 100,
-        initCallback: function (iframe) {
-            var iframeId = $(iframe).attr('id');
-            //$('#' + iframeId).hide();
-            $("iframe").each(function() {
-                //$(this).find('.cushy-img').hide();
-                var imgWidth = $(this).contents().find('.cushy-img-bg').width();
-                var imgHeight = $(this).contents().find('.cushy-img-bg').height();
-                $(this).css({'height': imgHeight + 'px', 'width': imgWidth + 'px'});
-                console.log(imgHeight);
-            });
-            //console.log(iframeId);
-        },
-        //checkOrigin:true,
-        resizedCallback         : function(messageData){ // Callback fn when resize is received
-            //console.log(messageData);
+    if(typeof $.fn.iFrameResize != 'undefined') {
+        $('iframe').iFrameResize({
+            log:false,
+            //maxHeight: 100,
+            initCallback: function (iframe) {
+                var iframeId = $(iframe).attr('id');
+                //$('#' + iframeId).hide();
+                $("iframe").each(function() {
+                    //$(this).find('.cushy-img').hide();
+                    var imgWidth = $(this).contents().find('.cushy-img-bg').width();
+                    var imgHeight = $(this).contents().find('.cushy-img-bg').height();
+                    $(this).css({'height': imgHeight + 'px', 'width': imgWidth + 'px'});
+                    console.log(imgHeight);
+                });
+                //console.log(iframeId);
+            },
+            //checkOrigin:true,
+            resizedCallback         : function(messageData){ // Callback fn when resize is received
+                //console.log(messageData);
 
-            /*$('p#callback').html(
-             '<b>Frame ID:</b> '    + messageData.iframe.id +
-             ' <b>Height:</b> '     + messageData.height +
-             ' <b>Width:</b> '      + messageData.width +
-             ' <b>Event type:</b> ' + messageData.type
-             ); */
-        },
-        messageCallback         : function(messageData){ // Callback fn when message is received
-            console.log(messageData);
-            /* $('p#callback').html(
-             '<b>Frame ID:</b> '    + messageData.iframe.id +
-             ' <b>Message:</b> '    + messageData.message
-             ); */
-            alert(messageData.message);
-        },
-        closedCallback         : function(id){ // Callback fn when iFrame is closed
-            /* $('p#callback').html(
-             '<b>IFrame (</b>'    + id +
-             '<b>) removed from page.</b>'
-             ); */
-        }
-    });
-
+                /*$('p#callback').html(
+                 '<b>Frame ID:</b> '    + messageData.iframe.id +
+                 ' <b>Height:</b> '     + messageData.height +
+                 ' <b>Width:</b> '      + messageData.width +
+                 ' <b>Event type:</b> ' + messageData.type
+                 ); */
+            },
+            messageCallback         : function(messageData){ // Callback fn when message is received
+                console.log(messageData);
+                /* $('p#callback').html(
+                 '<b>Frame ID:</b> '    + messageData.iframe.id +
+                 ' <b>Message:</b> '    + messageData.message
+                 ); */
+                alert(messageData.message);
+            },
+            closedCallback         : function(id){ // Callback fn when iFrame is closed
+                /* $('p#callback').html(
+                 '<b>IFrame (</b>'    + id +
+                 '<b>) removed from page.</b>'
+                 ); */
+            }
+        });
+    }
 
     $this.on('click', '#test', function(){
         var username = $("#username").val();
