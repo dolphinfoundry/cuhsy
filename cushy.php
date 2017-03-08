@@ -309,7 +309,6 @@ function cushy_add() {
                    
                    <div class="media-dynamic-content">
                      <ul tabindex="-1" class="attachments ui-sortable ui-sortable-disabled render-cushy-list" id="__attachments-view-250"></ul>
-                    <div class="btn-load-wrap"> <button type="button" id="loadMoreBtn" class="btn btn-md btn-grn">Load more</button> </div>                   
                    </div>
                    
                    <div class="media-sidebar visible">
