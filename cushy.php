@@ -109,7 +109,7 @@ function cushy_settings_menu(){
 }
 
 function include_cushy_js_file() {
-    wp_enqueue_script('cushy_modal', PLUGIN_PATH . 'cushy/js/cushy_modal.js', array(), '1.0.'.time(), true);
+    wp_enqueue_script('cushy', PLUGIN_PATH . 'cushy/js/cushy.js', array(), '1.0.'.time(), true);
 }
 
 function cushy_settings(){
@@ -262,15 +262,13 @@ function add_cushy_button() {
 add_action('media_buttons', 'add_cushy_button', 11);
 
 function include_cushy_button_js_file() {
-    wp_enqueue_style('custom_modal', PLUGIN_PATH . 'cushy/css/custom_modal.css', false, '1.0' . time());
-    wp_enqueue_script('cushy_modal', PLUGIN_PATH . 'cushy/js/cushy_modal.js', array(), '11.0.'.time(), true);
+    wp_enqueue_style('cushy', PLUGIN_PATH . 'cushy/css/cushy.css', false, '1.0' . time());
+    wp_enqueue_script('cushy', PLUGIN_PATH . 'cushy/js/cushy.js', array(), '1.0.'.time(), true);
 }
 
 add_action( 'wp_enqueue_media', 'include_cushy_button_js_file' );
 add_action( 'wp_ajax_cushy_add', 'cushy_add' );
-#add_action( 'wp_ajax_cushy_add_old', 'cushy_add_old' );
 add_action( 'wp_ajax_nopriv_cushy_add', 'cushy_add' );
-#add_action( 'wp_ajax_nopriv_cushy_add_old', 'cushy_add_old' );
 
 function cushy_add_old(){
     $cushy_auth = '<iframe id= "iframe" src="'.CUSHY_BASE_URL.'/sections/auth_cushy"  style="width: inherit;height:inherit"></iframe>';
@@ -479,74 +477,8 @@ function cushy_add() {
     $template_string .= '<input type="hidden" id="user_name" value="'.$user_name.'">
     <input type="hidden" id="sec_key" value="'.$security_key.'">';
 
-    //$template_string .= '<script src="'.plugin_dir_url().'cushy/cushy_modal.js?v=1"></script>';
+    //$template_string .= '<script src="'.plugin_dir_url().'cushy/js/cushy.js?v=1"></script>';
     echo $template_string; exit();
-
-    /*
-        $base_url = 'http://localhost/cushy_dev'; //localhost/cushy_dev1
-        $user_id = 8;
-        //$count = 100;
-
-        $options = array(
-            'http' => array(
-                'method' => "POST",
-                'content' => 'user_id=' . $user_id,
-                'header' => "cushy_api_key: 3bcd1fb0eaeabe09e96ae043e3f209a7\r\n" .
-                    "auth_secret: 5bf1ac1924bdca9c4b226e061651d215\r\n" . "device_id: 123"
-            )
-        );
-        $context = stream_context_create($options);
-        $data = file_get_contents($base_url.'/api/v1/getuserfeed', false, $context); //http://dev.cushy.com/api/v1/getuserfeed
-
-        $decoded_json = json_decode($data, true);
-
-        #echo "<pre>"; print_r($decoded_json); die;
-
-        $template_string = '
-        <button type="button" class="button-link media-modal-close"><span class="media-modal-icon"><span class="screen-reader-text">Close media panel</span></span></button>
-        <div class="media-modal-content">
-        <div class="media-frame mode-select wp-core-ui" id="__wp-uploader-id-0">
-        <div class="media-frame-title">
-           <h1>Add Cushy pictures to your story</h1>
-        </div>
-        <div class="media-frame-content" data-columns="3">
-           <div class="media-frame-content-items">
-              <table class="widefat">
-                 ';
-        foreach ($decoded_json["records"] as $value) {
-            $template_string .= '
-                     <tr>
-                        <td width="40%" class="img-thumb">
-                            <div class="img-thumb-section">
-                                <img class="thumb-sm" src="' . $value["media_url"] . '" width="120px">
-                            </div>
-                            <br/> <input type="radio" name="cushy_id" id="cushy_add_button" value='. $value["cushy_id"] . ' />
-                        </td>
-                        <td width="60%" id='. $value["cushy_id"] . '>'. $value["location_name"] . '<br />'. $value["description"] . '</td>
-                     </tr>
-                     ';
-        }
-        $template_string .= '
-              </table>
-           </div>
-        </div>
-        <div class="media-frame-toolbar">
-           <div class="media-toolbar">
-              <div class="media-toolbar-secondary">
-                 <div class="media-selection empty">
-                    <div class="selection-view">
-                       <ul tabindex="-1" class="attachments" id="__attachments-view-76"></ul>
-                    </div>
-                 </div>
-              </div>
-              <div class="media-toolbar-primary search-form"><button type="button" class="button media-button button-primary button-large media-button-insert" id="insert">Insert into post</button></div>
-           </div>
-        </div>';
-
-        $template_string .= '<script src="'.plugin_dir_url().'cushy/cushy_modal.js"></script>';
-        echo $template_string; exit();
-
-    */
 }
 
 function include_iframe_js_file() {
@@ -586,17 +518,17 @@ getWpData();
 
 <script>
     /*function resizeIFrameToFitContent( iFrame ) {
-        iFrame.width  = iFrame.contentWindow.document.body.scrollWidth;
-        iFrame.height = iFrame.contentWindow.document.body.scrollHeight;
-    }
+     iFrame.width  = iFrame.contentWindow.document.body.scrollWidth;
+     iFrame.height = iFrame.contentWindow.document.body.scrollHeight;
+     }
 
-    window.addEventListener('DOMContentReady', function(e) {
-        var iFrame = document.getElementById( 'iframe' );
-        resizeIFrameToFitContent( iFrame );
+     window.addEventListener('DOMContentReady', function(e) {
+     var iFrame = document.getElementById( 'iframe' );
+     resizeIFrameToFitContent( iFrame );
 
-        var iframes = document.querySelectorAll("iframe");
-        for( var i = 0; i < iframes.length; i++) {
-            resizeIFrameToFitContent( iframes[i] );
-        }
-    }); */
+     var iframes = document.querySelectorAll("iframe");
+     for( var i = 0; i < iframes.length; i++) {
+     resizeIFrameToFitContent( iframes[i] );
+     }
+     }); */
 </script>
