@@ -116,7 +116,7 @@ function cushy_settings(){
     ?>
 
     <div class="wrap">
-        <h1><?php echo esc_html($title); ?></h1>
+        <h1><?php if(isset($title)) echo esc_html($title); ?></h1>
 
         <form action="#" method="post" novalidate="novalidate" id="form">
             <?php settings_fields('cushy'); ?>
@@ -171,7 +171,7 @@ function cushy_settings(){
                         <th scope="row">
                             <label for="username">User Name</label></th>
                         <td>
-                            <input name="username" type="text" id="username" value="<?php echo $res->user_name; ?>" class="regular-text" />
+                            <input name="username" type="text" id="username" value="" class="regular-text" />
                             <span id="error" style="color: red;"></span>
                         </td>
                     </tr>
@@ -180,7 +180,7 @@ function cushy_settings(){
                         <th scope="row">
                             <label for="sec_key">Security Key</label></th>
                         <td>
-                            <input name="sec_key" type="text" id="sec_key" value="<?php echo $res->security_key; ?>" class="regular-text" />
+                            <input name="sec_key" type="text" id="sec_key" value="" class="regular-text" />
                             <span id="error" style="color: red;"></span>
                         </td>
                     </tr>
@@ -189,7 +189,7 @@ function cushy_settings(){
                         <th scope="row">
                             <label for="username">Blog URL</label></th>
                         <td>
-                            <input name="blog_url" type="text" id="blog_url" value="<?php echo $res->url; ?>" class="regular-text" />
+                            <input name="blog_url" type="text" id="blog_url" value="" class="regular-text" />
 
                         </td>
                     </tr>
