@@ -27,7 +27,7 @@ jQuery(function($) {
                     var imgWidth = $(this).contents().find('.cushy-img-bg').width();
                     var imgHeight = $(this).contents().find('.cushy-img-bg').height();
                     $(this).css({'height': imgHeight + 'px', 'width': imgWidth + 'px'});
-                    console.log(imgHeight);
+                    //console.log(imgHeight);
                 });
                 //console.log(iframeId);
             },
@@ -43,7 +43,7 @@ jQuery(function($) {
                  ); */
             },
             messageCallback         : function(messageData){ // Callback fn when message is received
-                console.log(messageData);
+                //console.log(messageData);
                 /* $('p#callback').html(
                  '<b>Frame ID:</b> '    + messageData.iframe.id +
                  ' <b>Message:</b> '    + messageData.message
@@ -107,8 +107,6 @@ jQuery(function($) {
                 console.log(userName +'___'+seckey);
 
                 var $elm = $('.render-cushy-list');
-                $('.pre-loader').css({'width': $elm.width() + 'px'});
-
                 if (userName !== "" && seckey !== "") {
                     $.ajax({
                         method: "POST",

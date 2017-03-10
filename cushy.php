@@ -302,14 +302,16 @@ function cushy_add() {
                       <button type="button" class="button media-button button-large media-button-backToLibrary return-btn" style="display: none">← Return to Cushy list</button>
                       <div class="media-toolbar-primary search-form"><label for="media-search-input" class="screen-reader-text">Search Cushy</label><input type="search" placeholder="Search cushy..." id="media-search-input" class="search"></div>
                    </div>
-                   <div
-                   <div class="pre-loader" style="display: block">
-                      <img src="'.PLUGIN_URL.'/assets/loader.gif" alt="cushy loader">
-                    </div>
                    
                    <div class="media-dynamic-content">
-                     <ul tabindex="-1" class="attachments ui-sortable ui-sortable-disabled render-cushy-list" id="__attachments-view-250"></ul>
-                   </div>
+                     <ul tabindex="-1" class="attachments ui-sortable ui-sortable-disabled render-cushy-list" id="__attachments-view-250">
+                     <li class="pre-loader-content">
+                         <div class="pre-loader" style="display: block">
+                          <img src="'.PLUGIN_URL.'/assets/loader.gif" alt="cushy loader">
+                       </div>
+                     </li>
+                     </ul>
+                    </div>
                    
                    <div class="media-sidebar visible">
                       <div class="media-uploader-status" style="display: none;">
