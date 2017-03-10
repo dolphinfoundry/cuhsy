@@ -505,7 +505,7 @@ add_shortcode('cushyview','cushy_view');
 
 function getWpData() {
     global $wpdb;
-    $user_credentials = $wpdb->get_row("SELECT * FROM wp_cushy_settings");
+    $user_credentials = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."cushy_settings");
     $user_name = (isset($user_credentials->user_name)) ? $user_credentials->user_name : "";
     $sec_key = (isset($user_credentials->security_key)) ? $user_credentials->security_key : "";
     return array('user_name' => $user_name, 'security_key' => $sec_key);
