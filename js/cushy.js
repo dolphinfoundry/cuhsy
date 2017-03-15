@@ -11,57 +11,81 @@ jQuery(function($) {
     var trackPage = 1;
     var loading  = false;
     var selectedItems = [];
+    var isResized = false;
 
     $this.addClass('cushy-media-modal media-modal');
     $this.find('a#add-cushy-button').html('<img src="'+ pluginUrl +'/assets/cushy-logo.png" alt="add cushy" style="width:18px; margin-top: -4px;" />Add Cushy');
 
     $.fn.calculateAspectRatioFit = function(srcWidth, srcHeight, maxWidth, maxHeight) {
-
         var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
-
         return { width: srcWidth*ratio, height: srcHeight*ratio };
     };
 
+    $.fn.loadIframeContents = function() {
+        if(typeof $.fn.iFrameResize != 'undefined') {
+            iFrameResize({
+                log:false,
+                //maxHeight: 100,
+                initCallback: function (iframe) {
 
-    if(typeof $.fn.iFrameResize != 'undefined') {
+                },
+                //checkOrigin:true,
+                //interval: 0,
+                //enablePublicMethods     : true,                  // Enable methods within iframe hosted page
+                //enableInPageLinks       : true,
+                resizedCallback: function(messageData){
+                    var $this = $("iframe#" + messageData.iframe.id);
+                    var imgWidth = $this.contents().find('.cushy-img').eq(0).width();
+                    var imgHeight = $this.contents().find('.cushy-img').eq(0).height();
 
-        iFrameResize({
-            log:false,
-            //maxHeight: 100,
-            initCallback: function (iframe) {
+                    $(window).resize(function () {
+                        $this = $("iframe#" + messageData.iframe.id);
+                        //var w = $this.contents().find('.cushy-img')[0].naturalWidth;
 
-            },
-            //checkOrigin:true,
-            //interval: 0,
-            enablePublicMethods     : true,                  // Enable methods within iframe hosted page
-            enableInPageLinks       : true,
-            resizedCallback: function(messageData){
-                var $this = $("iframe#" + messageData.iframe.id);
-                var imgWidth = $this.contents().find('.cushy-img').eq(0).width();
-                var imgHeight = $this.contents().find('.cushy-img').eq(0).height();
+                        if (!$this.hasClass('is-resized')) {
+                            imgWidth = $this.contents().find('.cushy-img').eq(0).width();
+                            imgHeight = $this.contents().find('.cushy-img').eq(0).height();
+                            setTimeout(function () {
+                                $this.css({'width': imgWidth + 'px', 'height': imgHeight + 'px'}).addClass('is-resized');
+                            }, 100);
+                        }
+                    });
 
-                if (!$this.hasClass('is-resized')) {
-                    setTimeout(function () {
-                        $this.css({'width': imgWidth + 'px', 'height': imgHeight + 'px'}).addClass('is-resized');
-                    }, 1000);
+
+                    if (!$this.hasClass('is-resized')) {
+                        setTimeout(function () {
+                            if (imgWidth > 0) {
+                                $this.prev('.iframe-pre-loader').css({'background': 'none', 'z-index': -1});
+                            }
+
+                            $this.contents().find('.cushy-img').eq(0).css('visibility', 'visible');
+                            $this.css({'width': imgWidth + 'px', 'height': imgHeight + 'px'}).addClass('is-resized');
+                        }, 100);
+                    }
+                },
+                messageCallback         : function(messageData){ // Callback fn when message is received
+                    /* $('p#callback').html(
+                     '<b>Frame I</b> '    + messageData.iframe.id +
+                     ' <b>Message:</b> '    + messageData.message
+                     ); */
+                    //alert(messageData.message);
+                },
+                closedCallback         : function(id){ // Callback fn when iFrame is closed
+                    /* $('p#callback').html(
+                     '<b>IFrame (</b>'    + id +
+                     '<b>) removed from page.</b>'
+                     ); */
                 }
-                //console.log(messageData.type);
-            },
-            messageCallback         : function(messageData){ // Callback fn when message is received
-                /* $('p#callback').html(
-                 '<b>Frame I</b> '    + messageData.iframe.id +
-                 ' <b>Message:</b> '    + messageData.message
-                 ); */
-                //alert(messageData.message);
-            },
-            closedCallback         : function(id){ // Callback fn when iFrame is closed
-                /* $('p#callback').html(
-                 '<b>IFrame (</b>'    + id +
-                 '<b>) removed from page.</b>'
-                 ); */
-            }
-        });
+            });
+        }
     }
+
+    $(window).resize(function () {
+        $.fn.loadIframeContents();
+    });
+
+    // Initialize the iframe content
+    $.fn.loadIframeContents();
 
     $this.on('click', '#test', function(){
         var username = $("#username").val();

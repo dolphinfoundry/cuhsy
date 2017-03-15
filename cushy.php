@@ -491,12 +491,13 @@ function include_iframe_js_file() {
 function cushy_view($atts) {
 
     if (count($atts) >0) {
-        $cushy_card = '<div class="iframe-content" style="left: 0px; width: 100%; height: auto; position: relative;">
-                        <iframe id="'.$atts['id'].'" class="cushy-iframe embed-responsive-item" src="'.CUSHY_BASE_URL.'/sections/view/'.$atts['id'].'" frameborder="0" allowfullscreen style="width:100%;height:100%;">
+        $cushy_card = '<div class="iframe-content" style="left: 0px; width: 100%; height: auto; position: relative; z-index: 99;">
+                        <div class="iframe-pre-loader" style="height: 100%; width: 100%; background: url('.PLUGIN_URL.'/assets/loader.gif) no-repeat center center; position: absolute; left: 0; top: 0; z-index: 100;"></div>
+                        <iframe id="'.$atts['id'].'" class="cushy-iframe embed-responsive-item" src="'.CUSHY_BASE_URL.'/sections/view/'.$atts['id'].'" frameborder="0" allowfullscreen style="background: rgba(43,25,72,1); width:100%;height:100%;">
                         </iframe>
                         </div>';
-        $cushy_card .= '<script src="'.PLUGIN_URL.'/js/iframeResizer.min.js?v=1"></script>';
-        $cushy_card .= '<script src="'.PLUGIN_URL.'/js/cushy.js?v=1"></script>';
+        $cushy_card .= '<script src="'.PLUGIN_URL.'/js/iframeResizer.min.js?v='.time().'"></script>';
+        $cushy_card .= '<script src="'.PLUGIN_URL.'/js/cushy.js?v='.time().'"></script>';
     }
     else $cushy_card = "";
 
