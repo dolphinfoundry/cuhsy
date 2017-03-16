@@ -12,7 +12,7 @@ License: GPL2
 
 global $cushy_db_version;
 $cushy_db_version = "1.0";
-define('CUSHY_BASE_URL', 'http://cushy.com');
+define('CUSHY_BASE_URL', 'https://cushy.com');
 define('PLUGIN_PATH', '/wp-content/plugins/');
 define('PLUGIN_URL', plugin_dir_url( __FILE__ ));
 define('PLUGIN_NAME', 'cushy-master');
