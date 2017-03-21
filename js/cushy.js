@@ -4,8 +4,8 @@
 
 jQuery(function($) {
     var isLocal = false;
-    var endpoint = (isLocal) ? 'dev.cushy.com' : 'cushy.com';
-    var apiBaseUrl = 'https://' + endpoint;
+    var endpoint = (isLocal) ? 'dev.cushy.com' : 'cushy.com'; //192.168.0.105/cushy_dev
+    var apiBaseUrl = 'http://' + endpoint;
     var $this = $(document);
     var pluginUrl = $this.find('input#pluginPath').val();
     var trackPage = 1;
@@ -21,62 +21,13 @@ jQuery(function($) {
         return { width: srcWidth*ratio, height: srcHeight*ratio };
     };
 
+    //sectionWidth = $this.find('.entry-content').width();
+
+    //alert(w);
+
     $.fn.loadIframeContents = function() {
         if(typeof $.fn.iFrameResize != 'undefined') {
-            iFrameResize({
-                log:false,
-                //maxHeight: 100,
-                initCallback: function (iframe) {
 
-                },
-                //checkOrigin:true,
-                //interval: 0,
-                //enablePublicMethods     : true,                  // Enable methods within iframe hosted page
-                //enableInPageLinks       : true,
-                resizedCallback: function(messageData){
-                    var $this = $("iframe#" + messageData.iframe.id);
-                    var imgWidth = $this.contents().find('.cushy-img').eq(0).width();
-                    var imgHeight = $this.contents().find('.cushy-img').eq(0).height();
-
-                    $(window).resize(function () {
-                        $this = $("iframe#" + messageData.iframe.id);
-                        //var w = $this.contents().find('.cushy-img')[0].naturalWidth;
-
-                        if (!$this.hasClass('is-resized')) {
-                            imgWidth = $this.contents().find('.cushy-img').eq(0).width();
-                            imgHeight = $this.contents().find('.cushy-img').eq(0).height();
-                            setTimeout(function () {
-                                $this.css({'width': imgWidth + 'px', 'height': imgHeight + 'px'}).addClass('is-resized');
-                            }, 100);
-                        }
-                    });
-
-
-                    if (!$this.hasClass('is-resized')) {
-                        setTimeout(function () {
-                            if (imgWidth > 0) {
-                                $this.prev('.iframe-pre-loader').css({'background': 'none', 'z-index': -1});
-                            }
-
-                            $this.contents().find('.cushy-img').eq(0).css('visibility', 'visible');
-                            $this.css({'width': imgWidth + 'px', 'height': imgHeight + 'px'}).addClass('is-resized');
-                        }, 100);
-                    }
-                },
-                messageCallback         : function(messageData){ // Callback fn when message is received
-                    /* $('p#callback').html(
-                     '<b>Frame I</b> '    + messageData.iframe.id +
-                     ' <b>Message:</b> '    + messageData.message
-                     ); */
-                    //alert(messageData.message);
-                },
-                closedCallback         : function(id){ // Callback fn when iFrame is closed
-                    /* $('p#callback').html(
-                     '<b>IFrame (</b>'    + id +
-                     '<b>) removed from page.</b>'
-                     ); */
-                }
-            });
         }
     }
 
@@ -160,21 +111,22 @@ jQuery(function($) {
                                     }
 
                                     $.each(response.data.records, function (index, value) {
-                                        //console.log(response.data.records);
+                                        console.log(value.media_thumb.url);
                                         liContent = '<li tabindex="0" role="checkbox" aria-label="'+ index +'" data-id="' + value.cushy_code + '" class="attachment save-ready select-item is-def-ite">' +
                                             '<div class="attachment-preview js--select-attachment type-image subtype-png landscape">' +
                                             '<div class="thumbnail" rel="' + value.cushy_code + '">' +
                                             '<div class="centered">' +
-                                            '<img src="' + response.data.image_path + '/medium/' + value.media_name + '" draggable="false" alt="'+ value.media_name +'">' +
+                                            '<img src="' + value.media_thumb.url +'" draggable="false" alt="'+ value.media_thumb.url +'">' +
                                             '</div>' +
                                             '</div>' +
                                             '</div>' +
                                             '<button type="button" class="button-link check" tabindex="0"><span class="media-modal-icon"></span><span class="screen-reader-text">Deselect</span></button>' +
                                             '<input type="hidden" id="cushy_id'+ value.cushy_code +'" name="cushy_id[]" value="'+ value.cushy_code +'">' +
-                                            '<input type="hidden" id="cushy_media'+ value.cushy_code +'" name="cushy_media[]" value="'+ response.data.image_path + '/large/' + value.media_name +'">' +
+                                            '<input type="hidden" id="cushy_media'+ value.cushy_code +'" name="cushy_media[]" value="'+ value.media_large.url +'">' +
                                             '<input type="hidden" id="cushy_desc'+ value.cushy_code +'" name="cushy_desc[]" value="'+ value.description +'">' +
                                             '<input type="hidden" id="cushy_loc'+ value.cushy_code +'" name="cushy_loc[]" value="'+ value.location_name +'">' +
-                                            '</li>';
+                                            '<input type="hidden" id="cushy_img_data'+ value.cushy_code +'" name="cushy_img_data[]" value="'+ value.media_large.width + 'x' + value.media_large.height +'">'
+                                        '</li>';
                                         $elm.append( liContent );
                                     });
 
@@ -315,7 +267,7 @@ jQuery(function($) {
             console.log(selectedItems);
             $(this).attr('disabled', false);
             $.each(selectedItems, function (index, value) {
-                cushyShortCode += '[cushyview caption="' + $("#cushy_desc" + value).val() + '" id="'+ value + '"]\n';
+                cushyShortCode += '[cushyview caption="' + $("#cushy_desc" + value).val() + '" id="'+ value + '" img_data="' + $("#cushy_img_data" + value).val() + '"]\n';
             })
             wp.media.editor.insert( cushyShortCode );
             selectedItems = [];

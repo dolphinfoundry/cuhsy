@@ -12,7 +12,7 @@ License: GPL2
 
 global $cushy_db_version;
 $cushy_db_version = "1.0";
-define('CUSHY_BASE_URL', 'https://cushy.com');
+define('CUSHY_BASE_URL', 'cushy.com'); //http://192.168.0.105/cushy_dev
 define('PLUGIN_PATH', '/wp-content/plugins/');
 define('PLUGIN_URL', plugin_dir_url( __FILE__ ));
 define('PLUGIN_NAME', 'cushy-master');
@@ -489,15 +489,57 @@ function include_iframe_js_file() {
 //add_action( 'wp_iframe_content', 'include_iframe_js_file' );
 
 function cushy_view($atts) {
-
     if (count($atts) >0) {
-        $cushy_card = '<div class="iframe-content" style="left: 0px; width: 100%; height: auto; position: relative; z-index: 99;">
-                        <div class="iframe-pre-loader" style="height: 100%; width: 100%; background: url('.PLUGIN_URL.'/assets/loader.gif) no-repeat center center; position: absolute; left: 0; top: 0; z-index: 100;"></div>
-                        <iframe id="'.$atts['id'].'" class="cushy-iframe embed-responsive-item" src="'.CUSHY_BASE_URL.'/sections/view/'.$atts['id'].'" frameborder="0" allowfullscreen style="background: rgba(43,25,72,1); width:100%;height:100%;">
+        $cushy_id = $atts['id'];
+        $img_data = (isset($atts['img_data'])) ? explode("x", $atts['img_data']) : array();
+        $img_width = (isset($img_data[0])) ? $img_data[0] : "100";
+        $img_height = (isset($img_data[1])) ? $img_data[1] : "100";
+        #echo "<pre>"; print_r($img_width."=====".$img_height);
+        #echo $img_width; die;
+
+        $cushy_card = '<div id="iframe-content-'.$atts['id'].'" class="iframe-content" style="border: 1px solid rgb(219, 219, 219); position: relative; left: 0px; width: 100%; height: auto; z-index: 99;">
+                        <div class="iframe-pre-loader" style="display: block; height: 100%; width: 100%; background: url('.PLUGIN_URL.'/assets/loader.gif) no-repeat center center; position: absolute; left: 0; top: 0; z-index: 100;"></div>
+                        <iframe id="'.$atts['id'].'" class="cushy-iframe embed-responsive-item" src="'.CUSHY_BASE_URL.'/sections/view/'.$atts['id'].'" frameborder="0" allowfullscreen style="background-color: #F8F8F8; height: 100%; width: calc(100%);">
                         </iframe>
                         </div>';
-        $cushy_card .= '<script src="'.PLUGIN_URL.'/js/iframeResizer.min.js?v='.time().'"></script>';
+        $cushy_card .= '<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>';
         $cushy_card .= '<script src="'.PLUGIN_URL.'/js/cushy.js?v='.time().'"></script>';
+        $cushy_card .= '<script>
+                           /*** Set Iframe aspect ratio on initiazlise ***/
+                           $.fn.initIframeContent = function(imgWidth, imgHeight, sectionWidth, sectionHeight) {
+                             /*var iframeElm = document.getElementById("iframe-content-'.$atts['id'].'");
+                             iframeElm.style.display = "block";
+                             iframeElm.style.maxWidth = sectionWidth + "px";
+                             iframeElm.style.width = imgWidth + "px";
+                             iframeElm.style.height = imgHeight + "px";*/
+                             
+                             //console.log(imgWidth + "___" + imgHeight + "___" + sectionWidth + "___" + sectionHeight);
+                             
+                             var iframeHeight = (imgHeight/imgWidth * sectionWidth);
+                             iframeHeight = Math.round(iframeHeight);
+                             //console.log(iframeHeight);
+                             
+                             var cushyId = \''.$cushy_id.'\';
+                             $("#iframe-content-" + cushyId).css({"border": "1px solid #ddd", "width": sectionWidth + "px", "height": iframeHeight + "px", "max-width": sectionWidth + "px"});
+                             
+                             document.getElementById(\''.$cushy_id.'\').onload= function() {
+                                $("#iframe-content-" + \''.$cushy_id.'\').find(".iframe-pre-loader").fadeOut();
+                             };
+                           }
+                           
+                            var imgWidth = '.$img_width.';
+                            var imgHeight = '.$img_height.';
+                            var sectionWidth = Math.round($(document).find(".entry-content").innerWidth());
+                            var sectionHeight = Math.round($(document).find(".entry-content").innerHeight());
+                             
+                            $.fn.initIframeContent(imgWidth, imgHeight, sectionWidth, sectionHeight);
+                            
+                            $(window).resize(function () {
+                                $.fn.initIframeContent(imgWidth, imgHeight, sectionWidth, sectionHeight);
+                            })
+                      </script>';
+        //$cushy_card .= '<script src="'.PLUGIN_URL.'/js/iframeResizer.min.js?v='.time().'"></script>';
+
     }
     else $cushy_card = "";
 
@@ -517,20 +559,3 @@ function getWpData() {
 getWpData();
 
 ?>
-
-<script>
-    /*function resizeIFrameToFitContent( iFrame ) {
-     iFrame.width  = iFrame.contentWindow.document.body.scrollWidth;
-     iFrame.height = iFrame.contentWindow.document.body.scrollHeight;
-     }
-
-     window.addEventListener('DOMContentReady', function(e) {
-     var iFrame = document.getElementById( 'iframe' );
-     resizeIFrameToFitContent( iFrame );
-
-     var iframes = document.querySelectorAll("iframe");
-     for( var i = 0; i < iframes.length; i++) {
-     resizeIFrameToFitContent( iframes[i] );
-     }
-     }); */
-</script>
