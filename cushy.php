@@ -12,7 +12,9 @@ License: GPL2
 
 global $cushy_db_version;
 $cushy_db_version = "1.0";
-define('CUSHY_BASE_URL', 'cushy.com'); //http://192.168.0.105/cushy_dev
+$is_dubug = false;
+$endpoint = ($is_dubug) ? 'dev.cushy.com' : 'cushy.com'; //192.168.0.105/cushy_dev
+define('CUSHY_BASE_URL', 'https://' . 'cushy.com');
 define('PLUGIN_PATH', '/wp-content/plugins/');
 define('PLUGIN_URL', plugin_dir_url( __FILE__ ));
 define('PLUGIN_NAME', 'cushy-master');
@@ -495,7 +497,6 @@ function cushy_view($atts) {
         $img_width = (isset($img_data[0])) ? $img_data[0] : "100";
         $img_height = (isset($img_data[1])) ? $img_data[1] : "100";
         #echo "<pre>"; print_r($img_width."=====".$img_height);
-        #echo $img_width; die;
 
         $cushy_card = '<div id="iframe-content-'.$atts['id'].'" class="iframe-content" style="border: 1px solid rgb(219, 219, 219); position: relative; left: 0px; width: 100%; height: auto; z-index: 99;">
                         <div class="iframe-pre-loader" style="display: block; height: 100%; width: 100%; background: url('.PLUGIN_URL.'/assets/loader.gif) no-repeat center center; position: absolute; left: 0; top: 0; z-index: 100;"></div>
@@ -506,20 +507,12 @@ function cushy_view($atts) {
         $cushy_card .= '<script src="'.PLUGIN_URL.'/js/cushy.js?v='.time().'"></script>';
         $cushy_card .= '<script>
                            /*** Set Iframe aspect ratio on initiazlise ***/
-                           $.fn.initIframeContent = function(imgWidth, imgHeight, sectionWidth, sectionHeight) {
-                             /*var iframeElm = document.getElementById("iframe-content-'.$atts['id'].'");
-                             iframeElm.style.display = "block";
-                             iframeElm.style.maxWidth = sectionWidth + "px";
-                             iframeElm.style.width = imgWidth + "px";
-                             iframeElm.style.height = imgHeight + "px";*/
-                             
-                             //console.log(imgWidth + "___" + imgHeight + "___" + sectionWidth + "___" + sectionHeight);
-                             
+                           $.fn.initIframeContent = function(imgWidth, imgHeight, sectionWidth) {
+                             //console.log(imgWidth + "___" + imgHeight + "___" + sectionWidth);
+                             var cushyId = \''.$cushy_id.'\';
                              var iframeHeight = (imgHeight/imgWidth * sectionWidth);
                              iframeHeight = Math.round(iframeHeight);
-                             //console.log(iframeHeight);
                              
-                             var cushyId = \''.$cushy_id.'\';
                              $("#iframe-content-" + cushyId).css({"border": "1px solid #ddd", "width": sectionWidth + "px", "height": iframeHeight + "px", "max-width": sectionWidth + "px"});
                              
                              document.getElementById(\''.$cushy_id.'\').onload= function() {
@@ -530,16 +523,14 @@ function cushy_view($atts) {
                             var imgWidth = '.$img_width.';
                             var imgHeight = '.$img_height.';
                             var sectionWidth = Math.round($(document).find(".entry-content").innerWidth());
-                            var sectionHeight = Math.round($(document).find(".entry-content").innerHeight());
+                            //var sectionHeight = $(document).find(".entry-content").innerHeight();
                              
-                            $.fn.initIframeContent(imgWidth, imgHeight, sectionWidth, sectionHeight);
+                            $.fn.initIframeContent(imgWidth, imgHeight, sectionWidth);
                             
                             $(window).resize(function () {
-                                $.fn.initIframeContent(imgWidth, imgHeight, sectionWidth, sectionHeight);
+                                $.fn.initIframeContent(imgWidth, imgHeight, sectionWidth);
                             })
                       </script>';
-        //$cushy_card .= '<script src="'.PLUGIN_URL.'/js/iframeResizer.min.js?v='.time().'"></script>';
-
     }
     else $cushy_card = "";
 

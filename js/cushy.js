@@ -3,9 +3,9 @@
  */
 
 jQuery(function($) {
-    var isLocal = false;
-    var endpoint = (isLocal) ? 'dev.cushy.com' : 'cushy.com'; //192.168.0.105/cushy_dev
-    var apiBaseUrl = 'http://' + endpoint;
+    var isDebug = false;
+    var endpoint = (isDebug) ? 'dev.cushy.com' : 'cushy.com'; //192.168.0.105/cushy_dev
+    var apiBaseUrl = 'https://' + endpoint;
     var $this = $(document);
     var pluginUrl = $this.find('input#pluginPath').val();
     var trackPage = 1;
@@ -20,10 +20,6 @@ jQuery(function($) {
         var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
         return { width: srcWidth*ratio, height: srcHeight*ratio };
     };
-
-    //sectionWidth = $this.find('.entry-content').width();
-
-    //alert(w);
 
     $.fn.loadIframeContents = function() {
         if(typeof $.fn.iFrameResize != 'undefined') {
