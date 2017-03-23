@@ -1,60 +1,71 @@
 /**
  * Created by Suman on 13/12/16.
  */
-
 jQuery(function($) {
     var isDebug = false;
-    var endpoint = (isDebug) ? 'dev.cushy.com' : 'cushy.com'; //192.168.0.105/cushy_dev
+    var endpoint = (isDebug) ? 'dev.cushy.com' : 'cushy.com';
     var apiBaseUrl = 'https://' + endpoint;
     var $this = $(document);
     var pluginUrl = $this.find('input#pluginPath').val();
     var trackPage = 1;
-    var loading  = false;
+    var loading = false;
     var selectedItems = [];
     var isResized = false;
 
     $this.addClass('cushy-media-modal media-modal');
-    $this.find('a#add-cushy-button').html('<img src="'+ pluginUrl +'/assets/cushy-logo.png" alt="add cushy" style="width:18px; margin-top: -4px;" />Add Cushy');
+    $this.find('a#add-cushy-button').html('<img src="' + pluginUrl + '/assets/cushy-logo.png" alt="add cushy" style="width:18px; margin-top: -4px;" />Add Cushy');
 
     $.fn.calculateAspectRatioFit = function(srcWidth, srcHeight, maxWidth, maxHeight) {
         var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
-        return { width: srcWidth*ratio, height: srcHeight*ratio };
+        return {
+            width: srcWidth * ratio,
+            height: srcHeight * ratio
+        };
     };
 
     $.fn.loadIframeContents = function() {
-        if(typeof $.fn.iFrameResize != 'undefined') {
+        if (typeof $.fn.iFrameResize != 'undefined') {
 
         }
     }
 
-    $(window).resize(function () {
+    $(window).resize(function() {
         $.fn.loadIframeContents();
     });
 
     // Initialize the iframe content
     $.fn.loadIframeContents();
 
-    $this.on('click', '#test', function(){
-        var username = $("#username").val();
-        if(!(username)){
-            alert("Please enter username");
+    $this.on('click', '#settingsSaveBtn', function() {
+        var username = $.trim($("#username").val());
+        var sec_key = $.trim($("#sec_key").val());
+        if (username.length == 0) {
+            $("#username").next(".field-error").text("Please enter Username");
             return false;
-        }else{
+        } else if (sec_key.length == 0) {
+            $("#sec_key").next(".field-error").text("Please enter Security Key");
+            return false;
+        } else {
             $.ajax({
                 url: apiBaseUrl + '/sections/auth.php',
-                data: {username:username},
+                data: {
+                    username: username
+                },
+                beforeSend: function() {
+                    $('#settingsSaveBtn').attr('disabled', true);
+                },
                 dataType: "jsonp",
-                success:function(response){ console.info(response);
-                    if(response.success !== undefined && response.success == 1){
+                success: function(response) {
+                    $('#settingsSaveBtn').attr('disabled', false);
+                    if (response.success !== undefined && response.success == 1) {
                         $('#form').submit();
                         return true;
-                    }else{
+                    } else {
                         $("#username").focus();
-                        $("#error").text("User name error");
-
+                        $("#error").text("Sorry!!! Username does not match");
                     }
                 },
-                error:function(){
+                error: function() {
                     alert("Error");
                 }
             });
@@ -63,116 +74,119 @@ jQuery(function($) {
 
     $.fn.has_scrollbar = function() {
         var divnode = this.get(0);
-        if(divnode.scrollHeight > divnode.clientHeight)
+        if (divnode.scrollHeight > divnode.clientHeight)
             return true;
     }
 
     /**
-     * Fetch cushy list
+     * Fetch the user posted cushy list
      *
      */
 
-    $.fn.fetchCushyList = function (trackPage) {
-        setTimeout(function () {
-            if(loading == false){
-                loading = true;  //set loading flag on
-                var userName = $.trim( $(document).find("#user_name").val() );
-                var seckey = $.trim( $(document).find("#sec_key").val() );
-                var searchKey = $.trim( $(document).find('#media-search-input').val() );
-                console.log(userName +'___'+seckey);
+    $.fn.fetchCushyList = function(trackPage, isSearchCleared) {
+        setTimeout(function() {
+            if (loading == false) {
+                loading = true; //set loading flag on
+                var userName = $.trim($(document).find("#user_name").val());
+                var seckey = $.trim($(document).find("#sec_key").val());
+                var searchKey = $.trim($(document).find('#media-search-input').val());
+                //console.log(userName +'___'+seckey);
 
-                var $elm = $('.render-cushy-list');
                 if (userName !== "" && seckey !== "") {
                     $.ajax({
                         method: "POST",
                         url: apiBaseUrl + "/api/v1/get_user_feeds",
-                        data: { user_name: userName, security_key: seckey, page: trackPage, search_key:searchKey },
-                        beforeSend: function () {
+                        data: {
+                            user_name: userName,
+                            security_key: seckey,
+                            page: trackPage,
+                            search_key: searchKey
+                        },
+                        beforeSend: function() {
                             $('.pre-loader').show();
-                            $('.media-selection, .cushy-overview').hide();
-                            selectedItems = [];
                         },
                         dataType: "jsonp",
-                        success:function(response){
+                        success: function(response) {
                             loading = false; //set loading flag off once the content is loading
                             $('.pre-loader').hide();
                             $('button#loadMoreBtn').text('Load more');
-
-                            if(response.success !== undefined && response.success == 1){
-                                //console.info(response.data.records);
-                                if (response.data.records !== undefined && response.data.records.length > 0) {
-                                    var liContent = "";
-                                    if (searchKey.length >0) {
-                                        $('.render-cushy-list').html('');
-                                    }
-
-                                    $.each(response.data.records, function (index, value) {
-                                        console.log(value.media_thumb.url);
-                                        liContent = '<li tabindex="0" role="checkbox" aria-label="'+ index +'" data-id="' + value.cushy_code + '" class="attachment save-ready select-item is-def-ite">' +
-                                            '<div class="attachment-preview js--select-attachment type-image subtype-png landscape">' +
-                                            '<div class="thumbnail" rel="' + value.cushy_code + '">' +
-                                            '<div class="centered">' +
-                                            '<img src="' + value.media_thumb.url +'" draggable="false" alt="'+ value.media_thumb.url +'">' +
-                                            '</div>' +
-                                            '</div>' +
-                                            '</div>' +
-                                            '<button type="button" class="button-link check" tabindex="0"><span class="media-modal-icon"></span><span class="screen-reader-text">Deselect</span></button>' +
-                                            '<input type="hidden" id="cushy_id'+ value.cushy_code +'" name="cushy_id[]" value="'+ value.cushy_code +'">' +
-                                            '<input type="hidden" id="cushy_media'+ value.cushy_code +'" name="cushy_media[]" value="'+ value.media_large.url +'">' +
-                                            '<input type="hidden" id="cushy_desc'+ value.cushy_code +'" name="cushy_desc[]" value="'+ value.description +'">' +
-                                            '<input type="hidden" id="cushy_loc'+ value.cushy_code +'" name="cushy_loc[]" value="'+ value.location_name +'">' +
-                                            '<input type="hidden" id="cushy_img_data'+ value.cushy_code +'" name="cushy_img_data[]" value="'+ value.media_large.width + 'x' + value.media_large.height +'">'
-                                        '</li>';
-                                        $elm.append( liContent );
-                                    });
-
-                                    if(response.data.next !== undefined && response.data.next >0) {
-                                        var insertLoddBtn = '<li class="btn-load-wrap"><button type="button" id="loadMoreBtn" class="btn btn-md btn-core-btn">Load more</button></li>';
-                                        $elm.append( insertLoddBtn );
-                                    }
+                            if (response.success == 1 && response.data.records !== undefined && response.data.records.length > 0) {
+                                var liContent = "";
+                                if (searchKey.length > 0 || isSearchCleared !== undefined) {
+                                    $('#TB_window').find('.render-cushy-list').find('li').not('li.pre-loader-content').remove();
                                 }
-                            }else{
+
+                                $.each(response.data.records, function(index, value) {
+                                    liContent = '<li tabindex="0" role="checkbox" aria-label="' + index + '" data-id="' + value.cushy_code + '" class="attachment save-ready select-item is-def-ite">' +
+                                        '<div class="attachment-preview js--select-attachment type-image subtype-png landscape">' +
+                                        '<div class="thumbnail" rel="' + value.cushy_code + '">' +
+                                        '<div class="centered">' +
+                                        '<img src="' + value.media_thumb.url + '" draggable="false" alt="' + value.media_thumb.url + '">' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '<button type="button" class="button-link check" tabindex="0"><span class="media-modal-icon"></span><span class="screen-reader-text">Deselect</span></button>' +
+                                        '<input type="hidden" id="cushy_id' + value.cushy_code + '" name="cushy_id[]" value="' + value.cushy_code + '">' +
+                                        '<input type="hidden" id="cushy_media' + value.cushy_code + '" name="cushy_media[]" value="' + value.media_large.url + '">' +
+                                        '<input type="hidden" id="cushy_desc' + value.cushy_code + '" name="cushy_desc[]" value="' + value.description + '">' +
+                                        '<input type="hidden" id="cushy_loc' + value.cushy_code + '" name="cushy_loc[]" value="' + value.location_name + '">' +
+                                        '<input type="hidden" id="cushy_img_data' + value.cushy_code + '" name="cushy_img_data[]" value="' + value.media_large.width + 'x' + value.media_large.height + '">'
+                                    '</li>';
+
+                                    $this.find('#TB_window').find('.render-cushy-list').append(liContent);
+                                });
+
+                                if (response.data.next !== undefined && response.data.next > 0 && response.data.records.length >= 20) {
+                                    var insertLoddBtn = '<li class="btn-load-wrap"><button type="button" id="loadMoreBtn" class="btn btn-md btn-core-btn">Load more</button></li>';
+                                    $('#TB_window').find('.render-cushy-list').append(insertLoddBtn);
+                                }
+                            } else {
                                 if (response.message !== undefined && response.message !== "") {
-                                    $elm.html('<li class="error-holder">'+ response.message +'</li>');
+                                    $('#TB_window').find('.render-cushy-list').html('<li class="error-holder">' + response.message + '</li>');
+                                } else {
+                                    if (response.data.records != undefined && response.data.records.length == 0)
+                                        $('#TB_window').find('.render-cushy-list').html('<li class="error-holder">Oops!!! No Cushy found</li>');
                                 }
-                                else {
-                                    if (response.data.records !== undefined && response.data.records.lenth === 0)
-                                        $elm.html('<li class="error-holder">Oops!!! No record</li>');
-                                }
+                                $this.find('.clear-selection').trigger('click');
                             }
                         },
-                        error:function(){
-                            console.log("Error");
+                        error: function() {
+                            console.log("Error fetching data");
                         }
                     });
-                }
-                else {
+                } else {
                     console.log('Cushy credentials are missing');
                 }
             }
-        }, 1000);
+        }, 500);
     }
 
     // fetch cushy list on add cushy button trigger
-    $('#add-cushy-button').on('click', function () {
+    $('#add-cushy-button').on('click', function() {
         trackPage = 1;
         selectedItems = [];
         cushyShortCode = "";
         $.fn.fetchCushyList(trackPage);
     })
 
-    $this.on('keyup click', '#media-search-input', function (event) {
-        var strLen = $.trim( $(this).val() );
+    var isSearched = false;
+    $this.on('keyup click', '#media-search-input', function(event) {
+        var strLen = $.trim($(this).val());
         clearTimeout($.data(this, 'timer'));
         trackPage = 1;
-        if (event.type == 'keyup' && strLen.length > 2) {
-            $.fn.fetchCushyList(trackPage);
-        }else {
-            if (event.type == 'click' && strLen === 0 || strLen === 0) {
-                $(this).data('timer', setTimeout(function () {
-                    $.fn.fetchCushyList(trackPage);
-                }, 500));
-            }
+
+        if (event.type == 'keyup' && (strLen.length > 2 || strLen.length === 0)) {
+            isSearched = true;
+            $(this).data('timer', setTimeout(function() {
+                $.fn.fetchCushyList(trackPage, isSearched);
+            }, 200));
+        }
+
+        if (event.type == 'click' && strLen.length > 0 && isSearched) {
+            isSearched = false;
+            $(this).data('timer', setTimeout(function() {
+                $.fn.fetchCushyList(trackPage, isSearched);
+            }, 200));
         }
     })
 
@@ -194,15 +208,14 @@ jQuery(function($) {
         } else {
             if (selectedItems.length === 5) {
                 alert("You can select upto 5 Cushy's");
-            }
-            else {
+            } else {
                 selectedItems.push(cushyId);
             }
         }
 
         $this.find('li.select-item').removeClass('selected details');
-        if (selectedItems.length >0) {
-            $.each(selectedItems, function (index, value) {
+        if (selectedItems.length > 0) {
+            $.each(selectedItems, function(index, value) {
                 $("[data-id='" + value + "']").addClass('selected');
             })
         }
@@ -210,7 +223,7 @@ jQuery(function($) {
         $(this).addClass('details');
         var numItemsSelected = selectedItems.length;
 
-        if ( numItemsSelected > 0 ) {
+        if (numItemsSelected > 0) {
             var cushyMedia = $(this).find('.thumbnail').attr('src');
             var cushyMedia = $("#cushy_media" + cushyId).val();
             var cushyDesc = $("#cushy_desc" + cushyId).val();
@@ -226,10 +239,9 @@ jQuery(function($) {
                 $('.media-selection').show();
             }
 
-            $('.media-selection').find('.count').text(numItemsSelected +' selected');
+            $('.media-selection').find('.count').text(numItemsSelected + ' selected');
             $this.find('.media-button-insert').attr('disabled', false);
-        }
-        else {
+        } else {
             $('.media-selection').hide();
             $this.find('.media-button-insert').attr('disabled', true);
         }
@@ -237,7 +249,7 @@ jQuery(function($) {
 
     $this.on('click', '.edit-selection', function() {
         $this.find('.select-item').not('.selected').hide();
-        $('.media-selection').hide();
+        $this.find('.media-selection, button#loadMoreBtn').hide();
         $this.find('.return-btn').show();
     })
 
@@ -250,7 +262,7 @@ jQuery(function($) {
 
     $this.on('click', '.return-btn', function() {
         $(this).hide();
-        $this.find('.select-item, .media-selection').show();
+        $this.find('.select-item, .media-selection, button#loadMoreBtn').show();
     })
 
     $(document).on('click', '.thumbnail', function() {
@@ -259,15 +271,14 @@ jQuery(function($) {
     })
 
     $(document).on('click', '.media-button-insert', function() {
-        if (selectedItems.length >0) {
-            console.log(selectedItems);
+        if (selectedItems.length > 0) {
             $(this).attr('disabled', false);
-            $.each(selectedItems, function (index, value) {
-                cushyShortCode += '[cushyview caption="' + $("#cushy_desc" + value).val() + '" id="'+ value + '" img_data="' + $("#cushy_img_data" + value).val() + '"]\n';
+            $.each(selectedItems, function(index, value) {
+                cushyShortCode += '[cushyview caption="' + $("#cushy_desc" + value).val() + '" id="' + value + '" img_data="' + $("#cushy_img_data" + value).val() + '"]\n';
             })
-            wp.media.editor.insert( cushyShortCode );
+            wp.media.editor.insert(cushyShortCode);
             selectedItems = [];
-        }else{
+        } else {
             $(this).attr('disabled', true);
             return false;
         }
@@ -279,7 +290,10 @@ jQuery(function($) {
         cushyShortCode = "";
         $this.find('.select-item').removeClass('selected details');
         $this.find('#TB_window').fadeOut();
-        $this.find('#TB_overlay').css({'background': 'transparent', 'opacity': 1});
+        $this.find('#TB_overlay').css({
+            'background': 'transparent',
+            'opacity': 1
+        });
     })
 
 });

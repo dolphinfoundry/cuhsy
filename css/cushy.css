@@ -75,6 +75,7 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%,-50%);
+    text-align: center;
     width: 100%;
     z-index: 999;
 }
@@ -112,7 +113,36 @@
     vertical-align: middle;
     width: 26px;
 }
-.iframe-pre-loader {
 
+.field-error {
+    color: rgba(255, 0, 0, 0.87);
+    font-size: 12px;
+}
 
+.isa_info, .isa_success, .isa_warning, .isa_error {
+    margin: 10px 0px;
+    padding:12px;
+
+}
+.isa_info {
+    color: #00529B;
+    background-color: #BDE5F8;
+}
+.isa_success {
+    color: #4f8a10;
+    background-color: #DFF2BF;
+    border: 1px solid rgba(79, 138, 16, 0.11);
+}
+.isa_warning {
+    color: #9F6000;
+    background-color: #FEEFB3;
+}
+.isa_error {
+    color: #D8000C;
+    background-color: #FFBABA;
+}
+.isa_info i, .isa_success i, .isa_warning i, .isa_error i {
+    margin:10px 22px;
+    font-size:2em;
+    vertical-align:middle;
 }

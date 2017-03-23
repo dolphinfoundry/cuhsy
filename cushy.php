@@ -9,21 +9,25 @@ Author URI: http://cushy.com
 License: GPL2
 */
 
-
 global $cushy_db_version;
 $cushy_db_version = "1.0";
-$is_dubug = false;
-$endpoint = ($is_dubug) ? 'dev.cushy.com' : 'cushy.com'; //192.168.0.105/cushy_dev
-define('CUSHY_BASE_URL', 'https://' . 'cushy.com');
+$is_dubug         = false;
+$endpoint         = ($is_dubug) ? 'dev.cushy.com' : 'cushy.com';
+define('CUSHY_BASE_URL', 'https://' . $endpoint);
 define('PLUGIN_PATH', '/wp-content/plugins/');
-define('PLUGIN_URL', plugin_dir_url( __FILE__ ));
+define('PLUGIN_URL', plugin_dir_url(__FILE__));
 define('PLUGIN_NAME', 'cushy-master');
 
-function my_plugin_create_db() {
+if (!session_id()) {
+    session_start();
+}
+
+function my_plugin_create_db()
+{
 
     global $wpdb;
     $charset_collate = $wpdb->get_charset_collate();
-    $table_name = $wpdb->prefix . 'my_analysis';
+    $table_name      = $wpdb->prefix . 'my_analysis';
 
     $sql = "CREATE TABLE $table_name (
 		id mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -33,14 +37,15 @@ function my_plugin_create_db() {
 		UNIQUE KEY id (id)
 	) $charset_collate;";
 
-    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-    dbDelta( $sql );
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
 }
 
-register_activation_hook(__FILE__,'my_plugin_create_db');
+register_activation_hook(__FILE__, 'my_plugin_create_db');
 
 
-function cushy_install() {
+function cushy_install()
+{
     global $wpdb;
     global $cushy_db_version;
 
@@ -57,88 +62,78 @@ function cushy_install() {
     $wpdb->query($sql);
 
 }
-register_activation_hook(__FILE__,'cushy_install');
-
-
-
-/*
-function test_new() {
-    global $wpdb;
-    global $cushy_db_version;
-
-    $your_db_name = $wpdb->prefix . 'cushy_settings';
-
-        $sql = "CREATE TABLE " . $your_db_name . " (
-		'id' mediumint(9) NOT NULL AUTO_INCREMENT,
-		'user_name' mediumtext NOT NULL,
-		'security_key'  VARCHAR(55) NOT NULL,
-		'url' text NOT NULL,
-		UNIQUE KEY id (id)
-		);";
-
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
-
-
-}
-
-register_activation_hook(__FILE__,'test_new');
-
-*/
+register_activation_hook(__FILE__, 'cushy_install');
 
 
 /* drop table when plugin is deactivated */
 
-function remove_cushy_settings_table() {
+function remove_cushy_settings_table()
+{
     global $wpdb;
     $table_name = $wpdb->prefix . "cushy_settings";
-    $sql = "DROP TABLE IF EXISTS $table_name;";
+    $sql        = "DROP TABLE IF EXISTS $table_name;";
     $wpdb->query($sql);
     delete_option("my_plugin_db_version");
 }
-register_deactivation_hook( __FILE__, 'remove_cushy_settings_table' );
-
-
+register_deactivation_hook(__FILE__, 'remove_cushy_settings_table');
 
 /* add cushy settings to menu */
 
 add_action('admin_menu', 'cushy_settings_menu');
 
-function cushy_settings_menu(){
-    add_menu_page( 'Cushy Settings Page', 'Cushy Settings', 'manage_options', 'cushy-settings', 'cushy_settings' );
+function cushy_settings_menu()
+{
+    add_menu_page('Cushy Settings Page', 'Cushy Settings', 'manage_options', 'cushy-settings', 'cushy_settings');
 }
 
-function include_cushy_js_file() {
-    wp_enqueue_script('iframeResizer', PLUGIN_URL .'/js/iframeResizer.min.js', array(), '2.0.'.time(), true);
-    wp_enqueue_script('cushy', PLUGIN_URL .'/js/cushy.js', array(), '1.0.'.time(), true);
+function include_cushy_js_file()
+{
+    wp_enqueue_style('cushy', PLUGIN_PATH . PLUGIN_NAME . '/css/cushy.css', false, '1.0' . time());
+    wp_enqueue_script('cushy', PLUGIN_PATH . PLUGIN_NAME . '/js/cushy.js', array(), '1.0.' . time(), true);
 }
 
-function cushy_settings(){
+function cushy_settings()
+{
     include_cushy_js_file();
     ?>
 
     <div class="wrap">
-        <h1><?php if(isset($title)) echo esc_html($title); ?></h1>
+        <?php
+        if (isset($_SESSION['is_updated']) && $_SESSION['is_updated'] != ""):
+            ?>
+            <div class="isa_success"><?php
+                echo $_SESSION['is_updated'];
+                $_SESSION['is_updated'] = "";
+                ?></div>
+            <?php
+        endif;
+        ?>
+
+        <h1>Cushy Settings</h1>
 
         <form action="#" method="post" novalidate="novalidate" id="form">
-            <?php settings_fields('cushy'); ?>
+            <?php
+            settings_fields('cushy');
+            ?>
 
             <?php
             global $wpdb;
 
-            $tablename = $wpdb->prefix.'cushy_settings';
+            $tablename = $wpdb->prefix . 'cushy_settings';
 
-            $results = $wpdb->get_results( "SELECT * FROM $tablename");
-            if($results){
-                foreach ($results as $res){
+            $results = $wpdb->get_results("SELECT * FROM $tablename");
+            if ($results) {
+                foreach ($results as $res) {
                     ?>
                     <table class="form-table">
                         <tr>
                             <th scope="row">
-                                <label for="username">User Name</label></th>
+                                <label for="username">Username</label></th>
                             <td>
-                                <input name="username" type="text" id="username" value="<?php echo $res->user_name; ?>" class="regular-text" />
-                                <span id="error" style="color: red;"></span>
+                                <input name="username" type="text" id="username" value="<?php
+                                echo $res->user_name;
+                                ?>" class="regular-text" />
+                                <div id="error" class="field-error"></div>
                             </td>
                         </tr>
 
@@ -146,8 +141,10 @@ function cushy_settings(){
                             <th scope="row">
                                 <label for="sec_key">Security Key</label></th>
                             <td>
-                                <input name="sec_key" type="text" id="sec_key" value="<?php echo $res->security_key; ?>" class="regular-text" />
-                                <span id="error" style="color: red;"></span>
+                                <input name="sec_key" type="text" id="sec_key" value="<?php
+                                echo $res->security_key;
+                                ?>" class="regular-text" />
+                                <div id="error" class="field-error"></div>
                             </td>
                         </tr>
 
@@ -155,7 +152,9 @@ function cushy_settings(){
                             <th scope="row">
                                 <label for="username">Blog URL</label></th>
                             <td>
-                                <input name="blog_url" type="text" id="blog_url" value="<?php echo $res->url; ?>" class="regular-text" />
+                                <input name="blog_url" type="text" id="blog_url" value="<?php
+                                echo $res->url;
+                                ?>" class="regular-text" />
 
                             </td>
                         </tr>
@@ -163,9 +162,10 @@ function cushy_settings(){
                     </table>
 
 
-                <?php }
+                    <?php
+                }
 
-            }else{
+            } else {
 
                 ?>
                 <table class="form-table">
@@ -174,7 +174,7 @@ function cushy_settings(){
                             <label for="username">User Name</label></th>
                         <td>
                             <input name="username" type="text" id="username" value="" class="regular-text" />
-                            <span id="error" style="color: red;"></span>
+                            <div id="error" class="field-error"></div>
                         </td>
                     </tr>
 
@@ -183,7 +183,7 @@ function cushy_settings(){
                             <label for="sec_key">Security Key</label></th>
                         <td>
                             <input name="sec_key" type="text" id="sec_key" value="" class="regular-text" />
-                            <span id="error" style="color: red;"></span>
+                            <div id="error" class="field-error"></div>
                         </td>
                     </tr>
 
@@ -198,51 +198,51 @@ function cushy_settings(){
 
                 </table>
 
-            <?php } ?>
+                <?php
+            }
+            ?>
 
-            <?php do_settings_sections('cushy'); ?>
+            <?php
+            do_settings_sections('cushy');
+            ?>
 
-
-            <input  id="test" class="button button-primary" value="Save Changes" type="button">
+            <input id="settingsSaveBtn" class="button button-primary" value="Save Changes" type="button">
         </form>
 
-
         <?php
-        if ($_POST){
+        if ($_POST) {
 
             global $wpdb;
 
-            $tablename = $wpdb->prefix.'cushy_settings';
+            $tablename = $wpdb->prefix . 'cushy_settings';
 
-            $results = $wpdb->get_results( "SELECT * FROM $tablename");
+            $results = $wpdb->get_results("SELECT * FROM $tablename");
 
-            if($results){
+            if ($results) {
 
-                #$wpdb->query($wpdb->prepare("UPDATE $tablename SET user_name='".$_POST['username']."', security_key='".$_POST['sec_key']."', url='".$_POST['blog_url']."' WHERE id != 0"));
-                $wpdb->update(
-                    $tablename,
-                    array(
-                        'user_name' => $_POST['username'],
-                        'security_key' => $_POST['sec_key'],
-                        'url' => $_POST['blog_url']
-                    ),
-                    array( 'id'=> 1 )
-                );
-                #$wpdb->query($wpdb->prepare("UPDATE $tablename SET time='$current_timestamp' WHERE userid=$userid"));
-                echo "<meta http-equiv='refresh' content='0'>";
-
-            }else{
-
-                $data=array(
+                $wpdb->update($tablename, array(
                     'user_name' => $_POST['username'],
                     'security_key' => $_POST['sec_key'],
-                    'url' => $_POST['blog_url'] );
+                    'url' => $_POST['blog_url']
+                ), array(
+                    'id' => 1
+                ));
+                $_SESSION['is_updated'] = $_POST['username'] . " Cushy settings has been updated";
+                echo "<meta http-equiv='refresh' content='0'>";
 
-                $wpdb->insert( $tablename, $data);
+            } else {
+
+                $data = array(
+                    'user_name' => $_POST['username'],
+                    'security_key' => $_POST['sec_key'],
+                    'url' => $_POST['blog_url']
+                );
+
+                $wpdb->insert($tablename, $data);
+                $_SESSION['is_updated'] = $_POST['username'] . " Cushy settings has been added";
 
                 echo "<meta http-equiv='refresh' content='0'>";
             }
-
         }
         ?>
 
@@ -267,25 +267,30 @@ function add_cushy_button()
     echo PLUGIN_URL;
     ?>">
     <?php
+    $get_cushy_access = getWpData();
+    $user_name        = (isset($get_cushy_access['user_name'])) ? $get_cushy_access['user_name'] : "";
+    $security_key     = (isset($get_cushy_access['security_key'])) ? $get_cushy_access['security_key'] : "";
+    echo '<input type="hidden" id="user_name" value="' . $user_name . '">';
+    echo '<input type="hidden" id="sec_key" value="' . $security_key . '">';
+    ?>
+    <?php
 }
 
 add_action('media_buttons', 'add_cushy_button', 11);
 
-function include_cushy_button_js_file() {
+function include_cushy_button_js_file()
+{
     wp_enqueue_style('cushy', PLUGIN_PATH . PLUGIN_NAME . '/css/cushy.css', false, '1.0' . time());
-    wp_enqueue_script('cushy', PLUGIN_PATH . PLUGIN_NAME . '/js/cushy.js', array(), '1.0.'.time(), true);
+    wp_enqueue_script('cushy', PLUGIN_PATH . PLUGIN_NAME . '/js/cushy.js', array(), '1.0.' . time(), true);
 }
 
-add_action( 'wp_enqueue_media', 'include_cushy_button_js_file' );
-add_action( 'wp_ajax_cushy_add', 'cushy_add' );
-add_action( 'wp_ajax_nopriv_cushy_add', 'cushy_add' );
+add_action('wp_enqueue_media', 'include_cushy_button_js_file');
+add_action('wp_ajax_cushy_add', 'cushy_add');
+add_action('wp_ajax_nopriv_cushy_add', 'cushy_add');
 
-function cushy_add() {
-    $get_cushy_access = getWpData();
-    $user_name = (isset($get_cushy_access['user_name'])) ? $get_cushy_access['user_name'] : "";
-    $security_key = (isset($get_cushy_access['security_key'])) ? $get_cushy_access['security_key'] : "";
+function cushy_add()
+{
     $template_string = '
-    
     <button type="button" class="button-link media-modal-close"><span class="media-modal-icon"><span class="screen-reader-text">Close media panel</span></span></button>
     <div class="media-modal-content cushy-media-modal">
     <div class="media-frame mode-select wp-core-ui" id="__wp-uploader-id-0">
@@ -301,7 +306,7 @@ function cushy_add() {
              <div class="media-frame-content" data-columns="4">
                 <div class="attachments-browser">
                    <div class="media-toolbar">
-                      <button type="button" class="button media-button button-large media-button-backToLibrary return-btn" style="display: none">← Return to Cushy list</button>
+                      <button type="button" class="button media-button button-large media-button-backToLibrary return-btn" style="display: none;margin-top: 11px;">← Return to Cushy list</button>
                       <div class="media-toolbar-primary search-form"><label for="media-search-input" class="screen-reader-text">Search Cushy</label><input type="search" placeholder="Search cushy..." id="media-search-input" class="search"></div>
                    </div>
                    
@@ -309,7 +314,7 @@ function cushy_add() {
                      <ul tabindex="-1" class="attachments ui-sortable ui-sortable-disabled render-cushy-list" id="__attachments-view-250">
                      <li class="pre-loader-content">
                          <div class="pre-loader" style="display: block">
-                          <img src="'.PLUGIN_URL.'/assets/loader.gif" alt="cushy loader">
+                          <img src="' . PLUGIN_URL . '/assets/loader.gif" alt="cushy loader">
                        </div>
                      </li>
                      </ul>
@@ -349,14 +354,6 @@ function cushy_add() {
                                <div class="dimensions">629 × 530</div>
                             </div>
                          </div>
-                         <label class="setting" data-setting="url">
-                         <span class="name">URL</span>
-                         <input type="text" class="cushy-media" value="http://localhost/cushy_blog/wp-content/uploads/2017/02/2.png" readonly>
-                         </label>
-                         <!--<label class="setting" data-setting="title">
-                         <span class="name">Memory</span>
-                         <input type="text" value="Cushy bubbles goes here">
-                         </label>-->
                          <label class="setting" data-setting="caption">
                          <span class="name">Caption</span>
                          <textarea class="cushy-caption" readonly></textarea>
@@ -477,51 +474,52 @@ function cushy_add() {
        </div>
     </div>';
 
-    $template_string .= '<input type="hidden" id="user_name" value="'.$user_name.'">
-    <input type="hidden" id="sec_key" value="'.$security_key.'">';
-
-    //$template_string .= '<script src="'.plugin_dir_url().'cushy/js/cushy.js?v=1"></script>';
-    echo $template_string; exit();
+    echo $template_string;
+    exit();
 }
 
-function include_iframe_js_file() {
-    wp_enqueue_script('iframeResizer', PLUGIN_URL . '/js/iframeResizer.min.js', array(), '2.0.'.time(), true);
+function include_iframe_js_file()
+{
+    wp_enqueue_script('iframeResizer', PLUGIN_URL . '/js/iframeResizer.min.js', array(), '2.0.' . time(), true);
 }
 
 //add_action( 'wp_iframe_content', 'include_iframe_js_file' );
 
-function cushy_view($atts) {
-    if (count($atts) >0) {
-        $cushy_id = $atts['id'];
-        $img_data = (isset($atts['img_data'])) ? explode("x", $atts['img_data']) : array();
-        $img_width = (isset($img_data[0])) ? $img_data[0] : "100";
+function cushy_view($atts)
+{
+    if (count($atts) > 0) {
+        $cushy_id   = $atts['id'];
+        $img_data   = (isset($atts['img_data'])) ? explode("x", $atts['img_data']) : array();
+        $img_width  = (isset($img_data[0])) ? $img_data[0] : "100";
         $img_height = (isset($img_data[1])) ? $img_data[1] : "100";
         #echo "<pre>"; print_r($img_width."=====".$img_height);
 
-        $cushy_card = '<div id="iframe-content-'.$atts['id'].'" class="iframe-content" style="border: 1px solid rgb(219, 219, 219); position: relative; left: 0px; width: 100%; height: auto; z-index: 99;">
-                        <div class="iframe-pre-loader" style="display: block; height: 100%; width: 100%; background: url('.PLUGIN_URL.'/assets/loader.gif) no-repeat center center; position: absolute; left: 0; top: 0; z-index: 100;"></div>
-                        <iframe id="'.$atts['id'].'" class="cushy-iframe embed-responsive-item" src="'.CUSHY_BASE_URL.'/sections/view/'.$atts['id'].'" frameborder="0" allowfullscreen style="background-color: #F8F8F8; height: 100%; width: calc(100%);">
+        $cushy_card = '<div id="iframe-content-' . $atts['id'] . '" class="iframe-content" style="border: 1px solid rgb(219, 219, 219); position: relative; left: 0px; width: 100%; height: auto; z-index: 99;">
+                        <div class="iframe-pre-loader" style="display: block; height: 100%; width: 100%; background: url(' . PLUGIN_URL . '/assets/loader.gif) no-repeat center center; position: absolute; left: 0; top: 0; z-index: 100;"></div>
+                        <iframe id="' . $atts['id'] . '" class="cushy-iframe embed-responsive-item" src="' . CUSHY_BASE_URL . '/sections/view/' . $atts['id'] . '" frameborder="0" allowfullscreen style="background-color: #F8F8F8; height: 100%; width: calc(100%);">
                         </iframe>
                         </div>';
         $cushy_card .= '<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>';
-        $cushy_card .= '<script src="'.PLUGIN_URL.'/js/cushy.js?v='.time().'"></script>';
+        $cushy_card .= '<script src="' . PLUGIN_URL . '/js/cushy.js?v=' . time() . '"></script>';
         $cushy_card .= '<script>
                            /*** Set Iframe aspect ratio on initiazlise ***/
                            $.fn.initIframeContent = function(imgWidth, imgHeight, sectionWidth) {
-                             //console.log(imgWidth + "___" + imgHeight + "___" + sectionWidth);
-                             var cushyId = \''.$cushy_id.'\';
+                             var cushyId = \'' . $cushy_id . '\';
+                             var sectionHeight = $(document).find(".entry-content").innerHeight();
                              var iframeHeight = (imgHeight/imgWidth * sectionWidth);
                              iframeHeight = Math.round(iframeHeight);
                              
+                             console.log(iframeHeight);
+                             
                              $("#iframe-content-" + cushyId).css({"border": "1px solid #ddd", "width": sectionWidth + "px", "height": iframeHeight + "px", "max-width": sectionWidth + "px"});
                              
-                             document.getElementById(\''.$cushy_id.'\').onload= function() {
-                                $("#iframe-content-" + \''.$cushy_id.'\').find(".iframe-pre-loader").fadeOut();
+                             document.getElementById(\'' . $cushy_id . '\').onload= function() {
+                                $("#iframe-content-" + \'' . $cushy_id . '\').find(".iframe-pre-loader").fadeOut();
                              };
                            }
                            
-                            var imgWidth = '.$img_width.';
-                            var imgHeight = '.$img_height.';
+                            var imgWidth = ' . $img_width . ';
+                            var imgHeight = ' . $img_height . ';
                             var sectionWidth = Math.round($(document).find(".entry-content").innerWidth());
                             //var sectionHeight = $(document).find(".entry-content").innerHeight();
                              
@@ -531,20 +529,24 @@ function cushy_view($atts) {
                                 $.fn.initIframeContent(imgWidth, imgHeight, sectionWidth);
                             })
                       </script>';
-    }
-    else $cushy_card = "";
+    } else
+        $cushy_card = "";
 
     return $cushy_card;
 }
 
-add_shortcode('cushyview','cushy_view');
+add_shortcode('cushyview', 'cushy_view');
 
-function getWpData() {
+function getWpData()
+{
     global $wpdb;
-    $user_credentials = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."cushy_settings");
-    $user_name = (isset($user_credentials->user_name)) ? $user_credentials->user_name : "";
-    $sec_key = (isset($user_credentials->security_key)) ? $user_credentials->security_key : "";
-    return array('user_name' => $user_name, 'security_key' => $sec_key);
+    $user_credentials = $wpdb->get_row("SELECT * FROM " . $wpdb->prefix . "cushy_settings");
+    $user_name        = (isset($user_credentials->user_name)) ? $user_credentials->user_name : "";
+    $sec_key          = (isset($user_credentials->security_key)) ? $user_credentials->security_key : "";
+    return array(
+        'user_name' => $user_name,
+        'security_key' => $sec_key
+    );
 }
 
 getWpData();
