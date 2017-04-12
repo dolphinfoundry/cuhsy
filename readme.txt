@@ -1,5 +1,5 @@
 === Plugin Name ===
-Contributors: foogyllis,
+Contributors: foogyllis, reachsuman, nandzgowda
 Tags: experience, share, remember, Cushy
 Requires at least: 3.7
 Tested up to: 4.7.3
