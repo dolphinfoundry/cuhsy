@@ -11,7 +11,7 @@ License: GPL2
 
 global $cushy_db_version;
 $cushy_db_version = "1.0";
-$is_dubug         = true;
+$is_dubug         = false;
 $endpoint         = ($is_dubug) ? 'dev.cushy.com' : 'cushy.com';
 define('CUSHY_BASE_URL', 'http://' . $endpoint);
 define('PLUGIN_PATH', '/wp-content/plugins/');
