@@ -2,7 +2,7 @@
  * Created by Suman on 13/12/16.
  */
 jQuery(function($) {
-    var isDebug = false;
+    var isDebug = true;
     var endpoint = (isDebug) ? 'dev.cushy.com' : 'cushy.com';
     var apiBaseUrl = 'http://' + endpoint;
     var $this = $(document);
