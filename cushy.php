@@ -30,12 +30,12 @@ function my_plugin_create_db()
     $table_name      = $wpdb->prefix . 'my_analysis';
 
     $sql = "CREATE TABLE $table_name (
-		id mediumint(9) NOT NULL AUTO_INCREMENT,
-		time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-		views smallint(5) NOT NULL,
-		clicks smallint(5) NOT NULL,
-		UNIQUE KEY id (id)
-	) $charset_collate;";
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+        views smallint(5) NOT NULL,
+        clicks smallint(5) NOT NULL,
+        UNIQUE KEY id (id)
+    ) $charset_collate;";
 
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta($sql);
@@ -206,7 +206,7 @@ function cushy_settings()
             do_settings_sections('cushy');
             ?>
 
-            <input id="settingsSaveBtn" class="button button-primary" value="Save Changes" type="button">
+            <input id="settingsSaveBtn" class="button button-primary" value="Login" type="button">
         </form>
 
         <?php
@@ -227,7 +227,7 @@ function cushy_settings()
                 ), array(
                     'id' => 1
                 ));
-                $_SESSION['is_updated'] = $_POST['username'] . " Cushy settings has been updated";
+                $_SESSION['is_updated'] = $_POST['username'] . " login details has been updated";
                 echo "<meta http-equiv='refresh' content='0'>";
 
             } else {
@@ -239,7 +239,7 @@ function cushy_settings()
                 );
 
                 $wpdb->insert($tablename, $data);
-                $_SESSION['is_updated'] = $_POST['username'] . " Cushy settings has been added";
+                $_SESSION['is_updated'] = $_POST['username'] . " has been logged in";
 
                 echo "<meta http-equiv='refresh' content='0'>";
             }
@@ -342,7 +342,7 @@ function cushy_add()
                       </div>
                       <div tabindex="0" data-id="1491" class="attachment-details save-ready cushy-overview" style="display: none">
                          <h2>
-                            Cushy details			<span class="settings-save-status">
+                            Cushy details           <span class="settings-save-status">
                             <span class="spinner"></span>
                             <span class="saved">Saved.</span>
                             </span>
@@ -382,16 +382,16 @@ function cushy_add()
                             <span>Alignment</span>
                             <select class="alignment" data-setting="align" data-user-setting="align">
                                <option value="left">
-                                  Left					
+                                  Left                  
                                </option>
                                <option value="center">
-                                  Center					
+                                  Center                    
                                </option>
                                <option value="right">
-                                  Right					
+                                  Right                 
                                </option>
                                <option value="none" selected="">
-                                  None					
+                                  None                  
                                </option>
                             </select>
                          </label>
@@ -400,16 +400,16 @@ function cushy_add()
                                <span>Link To</span>
                                <select class="link-to" data-setting="link" data-user-setting="urlbutton">
                                   <option value="none" selected="">
-                                     None					
+                                     None                   
                                   </option>
                                   <option value="file">
-                                     Media File					
+                                     Media File                 
                                   </option>
                                   <option value="post">
-                                     Attachment Page					
+                                     Attachment Page                    
                                   </option>
                                   <option value="custom">
-                                     Custom URL					
+                                     Custom URL                 
                                   </option>
                                </select>
                             </label>

@@ -203,6 +203,16 @@
 .cushy-media-modal .attachment-details .setting span {
     float: none;
 }
-.cushy-preview {
-    background: #D8D8D8 url('http://192.168.0.126/cushy_dev/blog/wp-content/plugins/cushy-master//assets/loader.png') no-repeat center center; margin-bottom: 0 !important;
+.cushy-lazy-bg {
+    background: #D8D8D8 url(../assets/loader.png) no-repeat center center;
+    background-size: 36px;
+}
+img.thumb-img {
+    background: none;
+    opacity: 0;
+    transition: opacity .3s ease-in;
+}
+#adminmenu a.toplevel_page_cushy-settings .dashicons-admin-generic:before {
+    background: url(../assets/cushy-icon.png) no-repeat center center;
+    content: "";
 }

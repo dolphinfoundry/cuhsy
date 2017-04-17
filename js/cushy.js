@@ -1,6 +1,7 @@
 /**
  * Created by Suman on 13/12/16.
  */
+
 jQuery(function($) {
     var isDebug = false;
     var endpoint = (isDebug) ? 'dev.cushy.com' : 'cushy.com';
@@ -125,9 +126,9 @@ jQuery(function($) {
                                 $.each(response.data.records, function(index, value) {
                                     liContent = '<li tabindex="0" role="checkbox" aria-label="' + index + '" data-id="' + value.cushy_code + '" class="attachment save-ready select-item is-def-ite">' +
                                         '<div class="attachment-preview js--select-attachment type-image subtype-png landscape">' +
-                                        '<div class="thumbnail" rel="' + value.cushy_code + '">' +
+                                        '<div class="thumbnail cushy-lazy-bg" rel="' + value.cushy_code + '">' +
                                         '<div class="centered">' +
-                                        '<img src="' + value.media_thumb.url + '" draggable="false" alt="' + value.media_thumb.url + '">' +
+                                        '<img class="thumb-img" src="' + value.media_thumb.url + '" draggable="false" alt="N/A">' +
                                         '</div>' +
                                         '</div>' +
                                         '</div>' +
@@ -143,6 +144,10 @@ jQuery(function($) {
                                     '</li>';
 
                                     $this.find('#TB_window').find('.render-cushy-list').append(liContent);
+                                });
+
+                                $this.find('#TB_window').find('.render-cushy-list').find("img.thumb-img").load(function() {
+                                    this.style.opacity = 1;
                                 });
 
                                 if (response.data.next !== undefined && response.data.next > 0 && response.data.records.length >= 20) {
