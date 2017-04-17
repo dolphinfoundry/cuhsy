@@ -212,7 +212,10 @@ img.thumb-img {
     opacity: 0;
     transition: opacity .3s ease-in;
 }
-#adminmenu a.toplevel_page_cushy-settings .dashicons-admin-generic:before {
+#adminmenu li.toplevel_page_cushy-settings .dashicons-admin-generic::before {
     background: url(../assets/cushy-icon.png) no-repeat center center;
+    content: "";
+}
+#TB_window.cushyTBWindow #TB_ajaxContent li::before {
     content: "";
 }

@@ -95,6 +95,7 @@ jQuery(function($) {
                 var searchKey = $.trim($(document).find('#media-search-input').val());
                 //console.log(userName +'___'+seckey);
 
+                $('#TB_window').addClass('cushyTBWindow');
                 if (userName !== "" && seckey !== "") {
                     $.ajax({
                         method: "POST",
