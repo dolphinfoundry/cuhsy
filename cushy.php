@@ -13,7 +13,7 @@ global $cushy_db_version;
 $cushy_db_version = "1.0";
 $is_dubug         = false;
 $endpoint         = ($is_dubug) ? 'dev.cushy.com' : 'cushy.com';
-define('CUSHY_BASE_URL', 'https://' . $endpoint);
+define('CUSHY_BASE_URL', 'http://' . $endpoint);
 define('PLUGIN_PATH', '/wp-content/plugins/');
 define('PLUGIN_URL', plugin_dir_url(__FILE__));
 define('PLUGIN_NAME', 'cushy-master');
@@ -262,7 +262,7 @@ function add_cushy_button()
         'width' => '500'
     ), admin_url('admin-ajax.php'));
     ?>"
-       id="add-cushy-button" class="button add_media thickbox" title="Add Cushys to your story">Add a Cushy</a>
+       id="add-cushy-button" class="button add_media thickbox" title="Add cushys to your story">Add cushy</a>
     <input type="hidden" id="pluginPath" value="<?php
     echo PLUGIN_URL;
     ?>">
@@ -295,7 +295,7 @@ function cushy_add()
     <div class="media-modal-content cushy-media-modal">
     <div class="media-frame mode-select wp-core-ui" id="__wp-uploader-id-0">
     <div class="media-frame-title">
-       <h1>Add Cushy pictures to your story</h1>
+       <h1>Add cushys to your story</h1>
     </div>
     <div class="media-frame-contents">
     <div class="media-frame-content-items">
@@ -307,14 +307,18 @@ function cushy_add()
                 <div class="attachments-browser">
                    <div class="media-toolbar">
                       <button type="button" class="button media-button button-large media-button-backToLibrary return-btn" style="display: none;margin-top: 11px;">← Return to Cushy list</button>
-                      <div class="media-toolbar-primary search-form"><label for="media-search-input" class="screen-reader-text">Search Cushy</label><input type="search" placeholder="Search cushy..." id="media-search-input" class="search"></div>
+                      <div class="media-toolbar-primary search-form">
+                      <label for="media-search-input" class="screen-reader-text">Search Cushy</label>
+                      <input type="text" placeholder="Search cushys..." id="media-search-input" class="search cushy-search-input">
+                      <span class="search-fld-btn"></span>
+                      </div>
                    </div>
                    
                    <div class="media-dynamic-content">
                      <ul tabindex="-1" class="attachments ui-sortable ui-sortable-disabled render-cushy-list" id="__attachments-view-250">
                      <li class="pre-loader-content">
                          <div class="pre-loader" style="display: block">
-                          <img src="' . PLUGIN_URL . '/assets/loader.gif" alt="cushy loader">
+                          <img src="' . PLUGIN_URL . '/assets/rolling-lg.gif" alt="cushy loader">
                        </div>
                      </li>
                      </ul>
@@ -338,7 +342,7 @@ function cushy_add()
                       </div>
                       <div tabindex="0" data-id="1491" class="attachment-details save-ready cushy-overview" style="display: none">
                          <h2>
-                            Attachment Details			<span class="settings-save-status">
+                            Cushy details			<span class="settings-save-status">
                             <span class="spinner"></span>
                             <span class="saved">Saved.</span>
                             </span>
@@ -355,12 +359,20 @@ function cushy_add()
                             </div>
                          </div>
                          <label class="setting" data-setting="caption">
-                         <span class="name">Caption</span>
+                         <span class="name">Caption</span><br>
                          <textarea class="cushy-caption" readonly></textarea>
                          </label>
                          <label class="setting" data-setting="alt">
-                         <span class="name">Place</span>
+                         <span class="name">Place</span><br>
                          <input type="text" class="cushy-loc" readonly>
+                         </label>
+                         <label class="setting" data-setting="alt">
+                         <span class="name">Date</span><br>
+                         <input type="text" class="cushy-date" readonly>
+                         </label>
+                         <label class="setting tags-block" data-setting="alt">
+                         <span class="name">Tags</span><br>
+                         <span class="cushy-tags"></span>
                          </label>
                       </div>
                       <form class="compat-item"></form>
@@ -495,7 +507,7 @@ function cushy_view($atts)
         #echo "<pre>"; print_r($img_width."=====".$img_height);
 
         $cushy_card = '<div id="iframe-content-' . $atts['id'] . '" class="iframe-content" style="border: 1px solid rgb(219, 219, 219); position: relative; left: 0px; width: 100%; height: auto; z-index: 99;">
-                        <div class="iframe-pre-loader" style="display: block; height: 100%; width: 100%; background: url(' . PLUGIN_URL . '/assets/loader.gif) no-repeat center center; position: absolute; left: 0; top: 0; z-index: 100;"></div>
+                        <div class="iframe-pre-loader" style="display: block; height: 100%; width: 100%; background: #D8D8D8 url(' . PLUGIN_URL . '/assets/loader.png) no-repeat center center; background-size: initial; position: absolute; left: 0; top: 0; z-index: 100;"></div>
                         <iframe id="' . $atts['id'] . '" class="cushy-iframe embed-responsive-item" src="' . CUSHY_BASE_URL . '/sections/view/' . $atts['id'] . '" frameborder="0" allowfullscreen style="background-color: #F8F8F8; height: 100%; width: calc(100%);">
                         </iframe>
                         </div>';
@@ -504,17 +516,17 @@ function cushy_view($atts)
         $cushy_card .= '<script>
                            /*** Set Iframe aspect ratio on initiazlise ***/
                            $.fn.initIframeContent = function(imgWidth, imgHeight, sectionWidth) {
+                             $(".cushy-card").css("display", "block");
                              var cushyId = \'' . $cushy_id . '\';
                              var sectionHeight = $(document).find(".entry-content").innerHeight();
                              var iframeHeight = (imgHeight/imgWidth * sectionWidth);
                              iframeHeight = Math.round(iframeHeight);
                              
-                             console.log(iframeHeight);
-                             
                              $("#iframe-content-" + cushyId).css({"border": "1px solid #ddd", "width": sectionWidth + "px", "height": iframeHeight + "px", "max-width": sectionWidth + "px"});
                              
                              document.getElementById(\'' . $cushy_id . '\').onload= function() {
                                 $("#iframe-content-" + \'' . $cushy_id . '\').find(".iframe-pre-loader").fadeOut();
+                                $(document).find(".cushy-preview").remove();
                              };
                            }
                            
@@ -526,7 +538,7 @@ function cushy_view($atts)
                             $.fn.initIframeContent(imgWidth, imgHeight, sectionWidth);
                             
                             $(window).resize(function () {
-                                $.fn.initIframeContent(imgWidth, imgHeight, sectionWidth);
+                                //$.fn.initIframeContent(imgWidth, imgHeight, sectionWidth);
                             })
                       </script>';
     } else
