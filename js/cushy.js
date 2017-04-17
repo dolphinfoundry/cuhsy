@@ -159,7 +159,7 @@ jQuery(function($) {
                                     $('#TB_window').find('.render-cushy-list').html('<li class="error-holder">' + response.message + '</li>');
                                 } else {
                                     if (response.data.records != undefined && response.data.records.length == 0)
-                                        $('#TB_window').find('.render-cushy-list').html('<li class="error-holder">Oops!!! No Cushy found</li>');
+                                        $('#TB_window').find('.render-cushy-list').html('<li class="error-holder">No matching cushys</li>');
                                 }
                                 $this.find('.clear-selection').trigger('click');
                             }
