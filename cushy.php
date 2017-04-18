@@ -77,20 +77,20 @@ function remove_cushy_settings_table()
 }
 register_deactivation_hook(__FILE__, 'remove_cushy_settings_table');
 
-/* add cushy settings to menu */
-
-add_action('admin_menu', 'cushy_settings_menu');
-
-function cushy_settings_menu()
-{
-    add_menu_page('Cushy Settings Page', 'Cushy Settings', 'manage_options', 'cushy-settings', 'cushy_settings');
-}
-
 function include_cushy_js_file()
 {
     wp_enqueue_style('cushy', PLUGIN_PATH . PLUGIN_NAME . '/css/cushy.css', false, '1.0' . time());
     wp_enqueue_script('cushy', PLUGIN_PATH . PLUGIN_NAME . '/js/cushy.js', array(), '1.0.' . time(), true);
 }
+
+function cushy_settings_menu()
+{
+    include_cushy_js_file();
+    add_menu_page('Cushy Settings Page', 'Cushy Settings', 'manage_options', 'cushy-settings', 'cushy_settings');
+}
+
+/* add cushy settings to menu */
+add_action('admin_menu', 'cushy_settings_menu');
 
 function cushy_settings()
 {
@@ -280,7 +280,7 @@ add_action('media_buttons', 'add_cushy_button', 11);
 
 function include_cushy_button_js_file()
 {
-    wp_enqueue_style('cushy', PLUGIN_PATH . PLUGIN_NAME . '/css/cushy.css', false, '1.0' . time());
+    wp_enqueue_style('cushy', PLUGIN_PATH . PLUGIN_NAME . '/css/cushy.css', true, '1.0' . time());
     wp_enqueue_script('cushy', PLUGIN_PATH . PLUGIN_NAME . '/js/cushy.js', array(), '1.0.' . time(), true);
 }
 

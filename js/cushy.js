@@ -26,19 +26,6 @@ jQuery(function($) {
         };
     };
 
-    $.fn.loadIframeContents = function() {
-        if (typeof $.fn.iFrameResize != 'undefined') {
-
-        }
-    }
-
-    $(window).resize(function() {
-        $.fn.loadIframeContents();
-    });
-
-    // Initialize the iframe content
-    $.fn.loadIframeContents();
-
     $this.on('click', '#settingsSaveBtn', function() {
         var username = $.trim($("#username").val());
         var sec_key = $.trim($("#sec_key").val());
@@ -340,18 +327,27 @@ jQuery(function($) {
                     }
                 }
 
-                cushyShortCode += '<iframe class="cushy-preview" src="' + $("#cushy_view_url" + value).val() + '" width="'+ ifWidth +'" height="'+ ifHeight +'" style="background: #D8D8D8 url(' + pluginUrl + '/assets/loader.png) no-repeat center center; margin-bottom: 0 !important;"></iframe>';
+                cushyShortCode += '<iframe class="cushy-preview" src="' + $("#cushy_view_url" + value).val() + '" width="'+ ifWidth +'" height="'+ ifHeight +'" style="background: #D8D8D8 url(' + pluginUrl + '/assets/loader.png) no-repeat center center;"></iframe>';
             })
             wp.media.editor.insert(cushyShortCode);
             selectedItems = [];
-            setTimeout(function () {
-                $(document).find(".cushy-preview").css('margin-bottom', 0);
-            }, 1000);
+            $.fn.removeIframeMargin();
         } else {
             $(this).attr('disabled', true);
             return false;
         }
     })
+
+    $.fn.removeIframeMargin = function () {
+        setTimeout(function () {
+            var $head = $("#content_ifr").contents().find("head");
+            $head.append($("<link/>",
+                { rel: "stylesheet", href: pluginUrl + '/css/cushy-override.css', type: "text/css" }
+            ));
+        }, 1);
+    }
+
+    $.fn.removeIframeMargin();
 
     $(document).on('click', '.media-modal-close', function() {
         trackPage = 1;
