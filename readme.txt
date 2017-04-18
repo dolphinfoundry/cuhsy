@@ -19,7 +19,7 @@ Cushy for Wordpress allows a user to access and showcase their content from cush
 
 1. Upload the plugin files to the `/wp-content/plugins/cushy` directory, or install the plugin through the WordPress plugins screen directly by uploading the cushy.zip file.
 2. Activate the plugin through the 'Plugins' screen in WordPress
-3. In the Admin Menu ue the Cushy Settings screen to configure the plugin.
+3. In the Admin Menu use the Cushy Settings screen to configure the plugin.
 4. You will need to add your Cushy Username, your given security key and your blog address with the https or http.  Example – http://blog.cushy.com
 
 
