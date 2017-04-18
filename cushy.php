@@ -13,7 +13,7 @@ global $cushy_db_version;
 $cushy_db_version = "1.0";
 $is_dubug         = false;
 $endpoint         = ($is_dubug) ? 'dev.cushy.com' : 'cushy.com';
-define('CUSHY_BASE_URL', 'http://' . $endpoint);
+define('CUSHY_BASE_URL', 'https://' . $endpoint);
 define('PLUGIN_PATH', '/wp-content/plugins/');
 define('PLUGIN_URL', plugin_dir_url(__FILE__));
 define('PLUGIN_NAME', 'cushy-master');

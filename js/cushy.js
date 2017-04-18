@@ -5,7 +5,7 @@
 jQuery(function($) {
     var isDebug = false;
     var endpoint = (isDebug) ? 'dev.cushy.com' : 'cushy.com';
-    var apiBaseUrl = 'http://' + endpoint;
+    var apiBaseUrl = 'https://' + endpoint;
     var $this = $(document);
     var pluginUrl = $this.find('input#pluginPath').val();
     var trackPage = 1;
