@@ -1,10 +1,10 @@
 <?php
 /*
 Plugin Name: Cushy.com User Content
-Plugin URI: http://cushy.com/wordpress
+Plugin URI: https://github.com/dolphinfoundry/cushy
 Description: a plugin to get your specific cushy.com user content into your blogs.
-Version: 0.1a
-Author: Foog Yllis, Suman Perumal, Nandish Gowda
+Version: 1.0
+Author: foogyllis, reachsuman, nandzgowda
 Author URI: http://cushy.com
 License: GPL2
 */
