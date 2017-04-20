@@ -390,8 +390,8 @@ function cushy_view_card($atts)
         $img_height = (isset($img_data[1])) ? $img_data[1] : "100";
 
         $cushy_card = '<div id="iframe-content-' . esc_attr($atts['id']) . '" class="iframe-content" style="border: 1px solid rgb(219, 219, 219); position: relative; left: 0px; width: 100%; height: auto; z-index: 99;">
-                        <div class="iframe-pre-loader" style="display: block; height: 100%; width: 100%; background: #D8D8D8 url(' . esc_url(CUSHY_WP_BASE_URL . 'assets/loader.png') . ') no-repeat center center; background-size: initial; position: absolute; left: 0; top: 0; z-index: 100;"></div>
-                        <iframe id="' . esc_attr($atts['id']) . '" class="cushy-iframe embed-responsive-item" src="' . esc_url(CUSHY_WP_BASE_URL . '/sections/view/' . $atts['id']) . '" frameborder="0" allowfullscreen style="background-color: #F8F8F8; height: 100%; width: calc(100%);"></iframe>
+                        <div class="iframe-pre-loader" style="display: block; height: 100%; width: 100%; background: #D8D8D8 url(' . esc_url(CUSHY_WP_PLUGIN_URL . 'assets/loader.png') . ') no-repeat center center; background-size: initial; position: absolute; left: 0; top: 0; z-index: 100;"></div>
+                        <iframe id="' . esc_attr($atts['id']) . '" class="cushy-iframe embed-responsive-item" src="' . esc_url(CUSHY_WP_BASE_URL . 'sections/view/' . $atts['id']) . '" frameborder="0" allowfullscreen style="background-color: #F8F8F8; height: 100%; width: calc(100%);"></iframe>
                         </div>';
         $cushy_card .= '<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>';
         $cushy_card .= '<script src="' . esc_js(CUSHY_WP_PLUGIN_URL . 'js/cushy.js?v=' . time()) . '"></script>';
