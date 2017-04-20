@@ -1,7 +1,3 @@
-/**
- * Created by Suman on 13/12/16.
- */
-
 jQuery(function($) {
     var isDebug = false;
     var endpoint = (isDebug) ? 'dev.cushy.com' : 'cushy.com';
@@ -26,7 +22,7 @@ jQuery(function($) {
         };
     };
 
-    $this.on('click', '#settingsSaveBtn', function() {
+    $this.on('click', '#settingsSaveBtn', function() { console.log(apiBaseUrl);
         var username = $.trim($("#username").val());
         var sec_key = $.trim($("#sec_key").val());
         if (username.length == 0) {
