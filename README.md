@@ -2,7 +2,7 @@
 Contributors: foogyllis, reachsuman, nandzgowda
 Tags: experience, share, remember, Cushy
 Requires at least: 3.7
-Tested up to: 4.7.3
+Tested up to: 4.7.4
 License: Apache 2.0
 License URI: http://directory.fsf.org/wiki/License:Apache2.0
 
