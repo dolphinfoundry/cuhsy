@@ -408,7 +408,7 @@ function cushy_view_card($atts)
                              
                              document.getElementById(\'' . $cushy_id . '\').onload= function() {
                                 $("#iframe-content-" + \'' . $cushy_id . '\').find(".iframe-pre-loader").fadeOut();
-                                $(document).find(".cushy-preview").remove();
+                                //$(document).find(".cushy-preview").remove();
                              };
                            }
                            

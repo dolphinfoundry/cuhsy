@@ -9,7 +9,7 @@ jQuery(function($) {
     var selectedItems = [];
     var isResized = false;
 
-    $(document).find(".cushy-preview").remove();
+    //$(document).find(".cushy-preview").remove();
 
     $this.addClass('cushy-media-modal media-modal');
     $this.find('a#add-cushy-button').html('<img src="' + pluginUrl + '/assets/cushy-logo.png" alt="add cushy" style="width:18px; margin-top: -4px;" />Add cushy');
@@ -312,18 +312,18 @@ jQuery(function($) {
             $(this).attr('disabled', false);
             $.each(selectedItems, function(index, value) {
                 var imgWH = $("#cushy_img_data" + value).val();
-                cushyShortCode += '<div class="cushy-card" style="display: none">[cushyview caption="' + $("#cushy_desc" + value).val() + '" id="' + value + '" img_data="' + imgWH + '"]\n</div>';
+                //cushyShortCode += '<div class="cushy-card" style="display: none">[cushyview caption="' + $("#cushy_desc" + value).val() + '" id="' + value + '" img_data="' + imgWH + '"]\n</div>';
                 var img_wh = imgWH.split("x");
-                var ifWidth = 320;
+                var ifWidth = 360;
                 var ifHeight = 480;
                 if (img_wh !== undefined && img_wh[0] !== undefined) {
                     if (img_wh[0] > img_wh[1]) {
                         ifWidth = 480;
-                        ifHeight = 320;
+                        ifHeight = 360;
                     }
                 }
 
-                cushyShortCode += '<iframe class="cushy-preview" src="' + $("#cushy_view_url" + value).val() + '" width="'+ ifWidth +'" height="'+ ifHeight +'" style="background: #D8D8D8 url(' + pluginUrl + '/assets/loader.png) no-repeat center center;"></iframe>';
+                cushyShortCode += '<iframe class="cushy-preview" src="' + $("#cushy_view_url" + value).val() + '" width="'+ ifWidth +'" height="'+ ifHeight +'" frameborder="0" style="background: #D8D8D8 url(' + pluginUrl + '/assets/loader.png) no-repeat center center;"></iframe>';
             })
             wp.media.editor.insert(cushyShortCode);
             selectedItems = [];
