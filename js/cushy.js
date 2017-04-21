@@ -9,7 +9,7 @@ jQuery(function($) {
     var selectedItems = [];
     var isResized = false;
 
-    //$(document).find(".cushy-preview").remove();
+    $(document).find(".cushy-preview").remove();
 
     $this.addClass('cushy-media-modal media-modal');
     $this.find('a#add-cushy-button').html('<img src="' + pluginUrl + '/assets/cushy-logo.png" alt="add cushy" style="width:18px; margin-top: -4px;" />Add cushy');
@@ -312,7 +312,7 @@ jQuery(function($) {
             $(this).attr('disabled', false);
             $.each(selectedItems, function(index, value) {
                 var imgWH = $("#cushy_img_data" + value).val();
-                //cushyShortCode += '<div class="cushy-card" style="display: none">[cushyview caption="' + $("#cushy_desc" + value).val() + '" id="' + value + '" img_data="' + imgWH + '"]\n</div>';
+                cushyShortCode += '<div class="cushy-card" style="display: none">[cushyview caption="' + $("#cushy_desc" + value).val() + '" id="' + value + '" img_data="' + imgWH + '"]\n</div>';
                 var img_wh = imgWH.split("x");
                 var ifWidth = 360;
                 var ifHeight = 480;
