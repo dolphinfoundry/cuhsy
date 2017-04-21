@@ -16,6 +16,8 @@ $endpoint         = ($is_dubug) ? 'dev.cushy.com' : 'cushy.com';
 define('CUSHY_WP_BASE_URL', 'https://' . $endpoint);
 define('CUSHY_WP_PLUGIN_URL', plugin_dir_url(__FILE__));
 
+if (!session_id()) session_start();
+
 function cushy_create_db()
 {
 
@@ -87,8 +89,6 @@ add_action('admin_menu', 'cushy_settings_menu');
 
 function cushy_settings()
 {
-    if (!session_id()) session_start();
-
     cushy_include_files();
     ?>
 
