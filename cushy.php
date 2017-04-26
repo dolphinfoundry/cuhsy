@@ -16,7 +16,104 @@ $endpoint         = ($is_dubug) ? 'dev.cushy.com' : 'cushy.com';
 define('CUSHY_WP_BASE_URL', 'https://' . $endpoint);
 define('CUSHY_WP_PLUGIN_URL', plugin_dir_url(__FILE__));
 
-if (!session_id()) session_start();
+class cushy_shortcode{
+
+    public $shortcode_tag = 'cushy_card';
+
+    function __construct($args = array()){
+        //add shortcode
+        add_shortcode( $this->shortcode_tag, array( $this, 'cushy_shortcode_handler' ) );
+
+        if ( is_admin() ){
+            add_action('admin_head', array( $this, 'admin_head') );
+            add_action( 'admin_enqueue_scripts', array($this , 'admin_enqueue_scripts' ) );
+        }
+    }
+
+    function cushy_shortcode_handler($atts , $content = null){
+        if (count($atts) > 0 && isset($atts['id'])) {
+            $cushy_id   = $atts['id'];
+            $img_data   = (isset($atts['img_data'])) ? explode("x", $atts['img_data']) : array();
+            $img_width  = (isset($img_data[0])) ? $img_data[0] : "100";
+            $img_height = (isset($img_data[1])) ? $img_data[1] : "100";
+
+            #echo "<pre>"; print_r($img_data); exit();
+
+            $cushy_card = '<div id="iframe-content-' . esc_attr($atts['id']) . '" class="iframe-content" style="border: 1px solid rgb(219, 219, 219); position: relative; left: 0px; width: 100%; height: auto; z-index: 99;">
+                        <div class="iframe-pre-loader" style="display: block; height: 100%; width: 100%; background: #D8D8D8 url(' . esc_url(CUSHY_WP_BASE_URL . 'assets/loader.png') . ') no-repeat center center; background-size: initial; position: absolute; left: 0; top: 0; z-index: 100;"></div>
+                        <iframe id="' . esc_attr($atts['id']) . '" class="cushy-iframe embed-responsive-item" src="' . esc_url(CUSHY_WP_BASE_URL . '/sections/view/' . $atts['id']) . '" frameborder="0" allowfullscreen style="background-color: #F8F8F8; height: 100%; width: calc(100%);"></iframe>
+                        </div>';
+            $cushy_card .= '<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>';
+            $cushy_card .= '<script src="' . esc_js(CUSHY_WP_PLUGIN_URL . 'js/cushy.js?v=' . time()) . '"></script>';
+            $cushy_card .= '<script>
+                           /*** Set Iframe aspect ratio on initiazlise ***/
+                           $.fn.initIframeContent = function(imgWidth, imgHeight, sectionWidth) {
+                             $(".cushy-card").css("display", "block");
+                             var cushyId = \'' . $cushy_id . '\';
+                             var sectionHeight = $(document).find(".entry-content").innerHeight();
+                             var iframeHeight = (imgHeight/imgWidth * sectionWidth);
+                             iframeHeight = Math.round(iframeHeight);
+                             
+                             $("#iframe-content-" + cushyId).css({"border": "1px solid #ddd", "width": sectionWidth + "px", "height": iframeHeight + "px", "max-width": sectionWidth + "px"});
+                             
+                             document.getElementById(\'' . $cushy_id . '\').onload= function() {
+                                $("#iframe-content-" + \'' . $cushy_id . '\').find(".iframe-pre-loader").fadeOut();
+                                $(document).find(".cushy-preview").remove();
+                             };
+                           }
+                           
+                            var imgWidth = ' . $img_width . ';
+                            var imgHeight = ' . $img_height . ';
+                            var sectionWidth = Math.round($(document).find(".entry-content").innerWidth());
+                            
+                            $.fn.initIframeContent(imgWidth, imgHeight, sectionWidth);
+                            
+                            $(window).resize(function () {
+                                $.fn.initIframeContent(imgWidth, imgHeight, sectionWidth);
+                            })
+                      </script>';
+        } else
+            $cushy_card = "";
+
+        return $cushy_card;
+
+
+    }
+
+
+    function admin_head() {
+
+        if ( !current_user_can( 'edit_posts' ) && !current_user_can( 'edit_pages' ) ) {
+            return;
+        }
+
+        if ( 'true' == get_user_option( 'rich_editing' ) ) {
+            add_filter( 'mce_external_plugins', array( $this ,'mce_external_plugins' ) );
+            add_filter( 'mce_buttons', array($this, 'mce_buttons' ) );
+        }
+    }
+
+
+    function mce_external_plugins( $plugin_array ) {
+        $plugin_array[$this->shortcode_tag] = plugins_url( 'js/cushy.js' , __FILE__ );
+        return $plugin_array;
+    }
+
+    function mce_buttons( $buttons ) {
+        array_push( $buttons, $this->shortcode_tag );
+        return $buttons;
+    }
+
+    function admin_enqueue_scripts(){
+        wp_enqueue_style('cushy_card_shortcode', plugins_url( 'css/cushy.css' , __FILE__ ) );
+    }
+}//end class
+
+new cushy_shortcode();
+
+
+/** End of plugin test */
+
 
 function cushy_create_db()
 {
@@ -75,7 +172,7 @@ register_deactivation_hook(__FILE__, 'cushy_remove_settings_table');
 function cushy_include_files()
 {
     wp_enqueue_style('cushy', CUSHY_WP_PLUGIN_URL . 'css/cushy.css', false, '1.0' . time());
-    wp_enqueue_script('cushy', CUSHY_WP_PLUGIN_URL . 'js/cushy.js', array(), '1.0.' . time(), true);
+    //wp_enqueue_script('cushy', CUSHY_WP_PLUGIN_URL . 'js/cushy.js', array(), '1.0.' . time(), true);
 }
 
 function cushy_settings_menu()
@@ -89,6 +186,8 @@ add_action('admin_menu', 'cushy_settings_menu');
 
 function cushy_settings()
 {
+    if (!session_id()) session_start();
+
     cushy_include_files();
     ?>
 
@@ -390,7 +489,7 @@ function cushy_view_card($atts)
         $img_height = (isset($img_data[1])) ? $img_data[1] : "100";
 
         $cushy_card = '<div id="iframe-content-' . esc_attr($atts['id']) . '" class="iframe-content" style="border: 1px solid rgb(219, 219, 219); position: relative; left: 0px; width: 100%; height: auto; z-index: 99;">
-                        <div class="iframe-pre-loader" style="display: block; height: 100%; width: 100%; background: #D8D8D8 url(' . esc_url(CUSHY_WP_PLUGIN_URL . 'assets/loader.png') . ') no-repeat center center; background-size: initial; position: absolute; left: 0; top: 0; z-index: 100;"></div>
+                        <div class="iframe-pre-loader" style="display: block; height: 100%; width: 100%; background: #D8D8D8 url(' . esc_url(CUSHY_WP_BASE_URL . 'assets/loader.png') . ') no-repeat center center; background-size: initial; position: absolute; left: 0; top: 0; z-index: 100;"></div>
                         <iframe id="' . esc_attr($atts['id']) . '" class="cushy-iframe embed-responsive-item" src="' . esc_url(CUSHY_WP_BASE_URL . '/sections/view/' . $atts['id']) . '" frameborder="0" allowfullscreen style="background-color: #F8F8F8; height: 100%; width: calc(100%);"></iframe>
                         </div>';
         $cushy_card .= '<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>';

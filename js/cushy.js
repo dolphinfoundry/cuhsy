@@ -307,33 +307,6 @@ jQuery(function($) {
         $(this).addClass('active-cushy');
     })
 
-    $(document).on('click', '.media-button-insert', function() {
-        if (selectedItems.length > 0) {
-            $(this).attr('disabled', false);
-            $.each(selectedItems, function(index, value) {
-                var imgWH = $("#cushy_img_data" + value).val();
-                cushyShortCode += '<div class="cushy-card" style="display: none">[cushyview caption="' + $("#cushy_desc" + value).val() + '" id="' + value + '" img_data="' + imgWH + '"]\n</div>';
-                var img_wh = imgWH.split("x");
-                var ifWidth = 360;
-                var ifHeight = 480;
-                if (img_wh !== undefined && img_wh[0] !== undefined) {
-                    if (img_wh[0] > img_wh[1]) {
-                        ifWidth = 480;
-                        ifHeight = 360;
-                    }
-                }
-
-                cushyShortCode += '<iframe class="cushy-preview" src="' + $("#cushy_view_url" + value).val() + '" width="'+ ifWidth +'" height="'+ ifHeight +'" frameborder="0" style="background: #D8D8D8 url(' + pluginUrl + '/assets/loader.png) no-repeat center center;"></iframe>';
-            })
-            wp.media.editor.insert(cushyShortCode);
-            selectedItems = [];
-            $.fn.removeIframeMargin();
-        } else {
-            $(this).attr('disabled', true);
-            return false;
-        }
-    })
-
     $.fn.removeIframeMargin = function () {
         setTimeout(function () {
             var $head = $("#content_ifr").contents().find("head");
@@ -343,7 +316,35 @@ jQuery(function($) {
         }, 1);
     }
 
-    $.fn.removeIframeMargin();
+    var sh_tag = 'cushy_card';
+    $(document).on('click', '.media-button-insert', function() {
+        if (selectedItems.length > 0) {
+            $(this).attr('disabled', false);
+            $.each(selectedItems, function (index, value) {
+                var imgWH = $("#cushy_img_data" + value).val();
+                cushyShortCode += '<div class="cushy-card" style="display: none">[cushyview caption="' + $("#cushy_desc" + value).val() + '" id="' + value + '" img_data="' + imgWH + '"]\n</div>';
+                var img_wh = imgWH.split("x");
+                var ifWidth = 320;
+                var ifHeight = 480;
+                if (img_wh !== undefined && img_wh[0] !== undefined) {
+                    if (img_wh[0] > img_wh[1]) {
+                        ifWidth = 480;
+                        ifHeight = 320;
+                    }
+                }
+
+                var fetch_shortcode = '[cushy_card caption="' + $("#cushy_desc" + value).val() + '" id="' + value + '" img_data="' + imgWH + '"][/cushy_card]';
+                wp.media.editor.insert(fetch_shortcode);
+            })
+
+            selectedItems = [];
+            $.fn.removeIframeMargin();
+
+        } else {
+            $(this).attr('disabled', true);
+            return false;
+        }
+    })
 
     $(document).on('click', '.media-modal-close', function() {
         trackPage = 1;
@@ -356,5 +357,68 @@ jQuery(function($) {
             'opacity': 1
         });
     })
+
+    $.fn.tinyMcePluginParser = function () {
+        tinymce.PluginManager.add('cushy_card', function( editor, url ) { console.log('hello');
+            var sh_tag = 'cushy_card';
+
+            //helper functions
+            function getCushyAttr(s, n) {
+                n = new RegExp(n + '=\"([^\"]+)\"', 'g').exec(s);
+                return n ?  window.decodeURIComponent(n[1]) : '';
+            };
+
+            function cushyHtml(cls, data ,con) {
+                var cushyCode = getCushyAttr(data,'id');
+                var imgWH = getCushyAttr(data,'img_data');
+                var img_wh = imgWH.split("x");
+                var iFrameWidth = 320;
+                var iFrameHeight = 480;
+
+                if (img_wh !== undefined && img_wh[0] !== undefined) {
+                    if (img_wh[0] > img_wh[1]) {
+                        iFrameWidth = 480;
+                        iFrameHeight = 320;
+                    }
+                }
+                data = window.encodeURIComponent( data );
+                content = window.encodeURIComponent( con );
+                return '<iframe src="'+ apiBaseUrl + '/sections/view/'+ cushyCode +'" width="'+ iFrameWidth +'" height="'+ iFrameHeight +'" class="mceItem ' + cls + '" data-sh-attr="' + data + '" data-sh-content="'+ con+'" frameborder="0" style="background: #D8D8D8 url(' + pluginUrl + '/assets/loader.png) no-repeat center center;"></iframe>';
+            }
+
+            function replaceCushyShortcodes( content ) {
+                return content.replace( /\[cushy_card([^\]]*)\]([^\]]*)\[\/cushy_card\]/g, function( all,attr,con) {
+                    return cushyHtml( 'wp-'+sh_tag, attr , con);
+                });
+            }
+
+            function restoreCushyShortcodes( content ) {
+                return content.replace( /(<iframe.*?>.*?<\/iframe>)/g, function( match, image ) {
+                    var data = getCushyAttr( image, 'data-sh-attr' );
+                    var con = getCushyAttr( image, 'data-sh-content' );
+
+                    if ( data ) {
+                        return '<p>[' + sh_tag + data + '][/'+sh_tag+']</p>';
+                    }
+
+                    return match;
+                });
+            }
+
+            editor.on('BeforeSetcontent', function(event){
+                event.content = replaceCushyShortcodes( event.content );
+            });
+
+
+            editor.on('GetContent', function(event){
+                event.content = restoreCushyShortcodes(event.content);
+            });
+
+            $.fn.removeIframeMargin();
+        });
+    }
+
+    // Load the iframe on page ready
+    $.fn.tinyMcePluginParser();
 
 });
