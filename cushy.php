@@ -95,7 +95,7 @@ class cushy_shortcode{
 
 
     function mce_external_plugins( $plugin_array ) {
-        $plugin_array[$this->shortcode_tag] = plugins_url( 'js/cushy.js' , __FILE__ );
+        $plugin_array[$this->shortcode_tag] = plugins_url( '' , __FILE__ );
         return $plugin_array;
     }
 
@@ -172,7 +172,7 @@ register_deactivation_hook(__FILE__, 'cushy_remove_settings_table');
 function cushy_include_files()
 {
     wp_enqueue_style('cushy', CUSHY_WP_PLUGIN_URL . 'css/cushy.css', false, '1.0' . time());
-    //wp_enqueue_script('cushy', CUSHY_WP_PLUGIN_URL . 'js/cushy.js', array(), '1.0.' . time(), true);
+    wp_enqueue_script('cushy', CUSHY_WP_PLUGIN_URL . 'js/cushy.js', array(), '1.0.' . time(), true);
 }
 
 function cushy_settings_menu()
