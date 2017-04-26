@@ -40,7 +40,7 @@ class cushy_shortcode{
             #echo "<pre>"; print_r($img_data); exit();
 
             $cushy_card = '<div id="iframe-content-' . esc_attr($atts['id']) . '" class="iframe-content" style="border: 1px solid rgb(219, 219, 219); position: relative; left: 0px; width: 100%; height: auto; z-index: 99;">
-                        <div class="iframe-pre-loader" style="display: block; height: 100%; width: 100%; background: #D8D8D8 url(' . esc_url(CUSHY_WP_BASE_URL . 'assets/loader.png') . ') no-repeat center center; background-size: initial; position: absolute; left: 0; top: 0; z-index: 100;"></div>
+                        <div class="iframe-pre-loader" style="display: block; height: 100%; width: 100%; background: #D8D8D8 url(' . esc_url(CUSHY_WP_PLUGIN_URL . 'assets/loader.png') . ') no-repeat center center; background-size: initial; position: absolute; left: 0; top: 0; z-index: 100;"></div>
                         <iframe id="' . esc_attr($atts['id']) . '" class="cushy-iframe embed-responsive-item" src="' . esc_url(CUSHY_WP_BASE_URL . '/sections/view/' . $atts['id']) . '" frameborder="0" allowfullscreen style="background-color: #F8F8F8; height: 100%; width: calc(100%);"></iframe>
                         </div>';
             $cushy_card .= '<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>';
@@ -177,6 +177,7 @@ function cushy_include_files()
 
 function cushy_settings_menu()
 {
+    if (!session_id()) session_start();
     cushy_include_files();
     add_menu_page('Cushy Settings Page', 'Cushy Settings', 'manage_options', 'cushy-settings', 'cushy_settings');
 }
@@ -186,8 +187,6 @@ add_action('admin_menu', 'cushy_settings_menu');
 
 function cushy_settings()
 {
-    if (!session_id()) session_start();
-
     cushy_include_files();
     ?>
 

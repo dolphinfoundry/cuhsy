@@ -333,7 +333,7 @@ jQuery(function($) {
                     }
                 }
 
-                var fetch_shortcode = '[cushy_card caption="' + $("#cushy_desc" + value).val() + '" id="' + value + '" img_data="' + imgWH + '"][/cushy_card]';
+                var fetch_shortcode = '[cushy_card caption="' + $("#cushy_desc" + value).val() + '" id="' + value + '" img_data="' + imgWH + '"]';
                 wp.media.editor.insert(fetch_shortcode);
             })
 
@@ -387,7 +387,7 @@ jQuery(function($) {
             }
 
             function replaceCushyShortcodes( content ) {
-                return content.replace( /\[cushy_card([^\]]*)\]([^\]]*)\[\/cushy_card\]/g, function( all,attr,con) {
+                return content.replace( /\[cushy_card([^\]]*)\]/g, function( all,attr,con) {
                     return cushyHtml( 'wp-'+sh_tag, attr , con);
                 });
             }
@@ -398,7 +398,7 @@ jQuery(function($) {
                     var con = getCushyAttr( image, 'data-sh-content' );
 
                     if ( data ) {
-                        return '<p>[' + sh_tag + data + '][/'+sh_tag+']</p>';
+                        return '<p>[' + sh_tag + data + ']</p>';
                     }
 
                     return match;
