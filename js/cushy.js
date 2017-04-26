@@ -376,21 +376,29 @@ jQuery(function($) {
                 var iFrameHeight = 0;
 
                 if (img_wh !== undefined && img_wh[0] !== undefined) {
-                    iFrameWidth = img_wh[0];
-                    iFrameHeight = img_wh[1];
+                    imgWidth = img_wh[0];
+                    imgHeight = img_wh[1];
 
-                    var editorWidth = $(document).find('.mce-edit-area').width();
-                    var editorHeight = $(document).find('.mce-edit-area').height();
-                    var iframeHeight = (iFrameHeight / iFrameWidth * editorWidth);
-                    iframeHeight = Math.round(iframeHeight);
+                    var editorContentWidth = $(document).find('.mce-edit-area').innerWidth();
+                    iFrameHeight = (imgHeight / imgWidth * editorContentWidth);
+                    iFrameHeight = Math.round(iFrameHeight);
 
-                    //console.log( editorWidth + '---'+ iframeHeight );
+                    if (editorContentWidth > imgWidth) { console.log('hello');
+                        iFrameWidth = imgWidth;
+                        iFrameHeight = imgHeight;
+                    }
+                    else {
+                        iFrameWidth = editorContentWidth;
+                    }
+
+                    //console.log( editorContentWidth + '---'+ iframeHeight );
 
                     data = window.encodeURIComponent( data );
                     content = window.encodeURIComponent( con );
 
-                    return '<iframe src="'+ apiBaseUrl + '/sections/view/'+ cushyCode +'" width="'+ editorWidth +'" height="'+ iframeHeight +'" class="mceItem ' + cls + '" data-sh-attr="' + data + '" data-sh-content="'+ con+'" frameborder="0" style="background: #D8D8D8 url(' + pluginUrl + '/assets/loader.png) no-repeat center center;"></iframe>';
+                    $(document).find('.mce-preview-object').css('display', 'none');
 
+                    return '<iframe src="'+ apiBaseUrl + '/sections/view/'+ cushyCode +'" width="'+ iFrameWidth +'" height="'+ iFrameHeight +'" class="mceItem ' + cls + '" data-sh-attr="' + data + '" data-sh-content="'+ con+'" frameborder="0" style="width: '+ iFrameWidth +'px; height: '+ iFrameHeight +'px; max-width: '+ iFrameWidth +'px; max-height: '+ iFrameHeight +'px; background: #D8D8D8 url(' + pluginUrl + '/assets/loader.png) no-repeat center center;"></iframe>';
                 }
             }
 
