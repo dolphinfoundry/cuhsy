@@ -95,7 +95,7 @@ class cushy_shortcode{
 
 
     function mce_external_plugins( $plugin_array ) {
-        $plugin_array[$this->shortcode_tag] = plugins_url( '' , __FILE__ );
+        $plugin_array[$this->shortcode_tag] = plugins_url();
         return $plugin_array;
     }
 
@@ -526,7 +526,7 @@ function cushy_view_card($atts)
     return $cushy_card;
 }
 
-add_shortcode('cushyview', 'cushy_view_card');
+//add_shortcode('cushyview', 'cushy_view_card');
 
 function cushy_get_wp_data()
 {

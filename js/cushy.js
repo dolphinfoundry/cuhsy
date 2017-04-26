@@ -372,18 +372,26 @@ jQuery(function($) {
                 var cushyCode = getCushyAttr(data,'id');
                 var imgWH = getCushyAttr(data,'img_data');
                 var img_wh = imgWH.split("x");
-                var iFrameWidth = 320;
-                var iFrameHeight = 480;
+                var iFrameWidth = 0;
+                var iFrameHeight = 0;
 
                 if (img_wh !== undefined && img_wh[0] !== undefined) {
-                    if (img_wh[0] > img_wh[1]) {
-                        iFrameWidth = 480;
-                        iFrameHeight = 320;
-                    }
+                    iFrameWidth = img_wh[0];
+                    iFrameHeight = img_wh[1];
+
+                    var editorWidth = $(document).find('.mce-edit-area').width();
+                    var editorHeight = $(document).find('.mce-edit-area').height();
+                    var iframeHeight = (iFrameHeight / iFrameWidth * editorWidth);
+                    iframeHeight = Math.round(iframeHeight);
+
+                    //console.log( editorWidth + '---'+ iframeHeight );
+
+                    data = window.encodeURIComponent( data );
+                    content = window.encodeURIComponent( con );
+
+                    return '<iframe src="'+ apiBaseUrl + '/sections/view/'+ cushyCode +'" width="'+ editorWidth +'" height="'+ iframeHeight +'" class="mceItem ' + cls + '" data-sh-attr="' + data + '" data-sh-content="'+ con+'" frameborder="0" style="background: #D8D8D8 url(' + pluginUrl + '/assets/loader.png) no-repeat center center;"></iframe>';
+
                 }
-                data = window.encodeURIComponent( data );
-                content = window.encodeURIComponent( con );
-                return '<iframe src="'+ apiBaseUrl + '/sections/view/'+ cushyCode +'" width="'+ iFrameWidth +'" height="'+ iFrameHeight +'" class="mceItem ' + cls + '" data-sh-attr="' + data + '" data-sh-content="'+ con+'" frameborder="0" style="background: #D8D8D8 url(' + pluginUrl + '/assets/loader.png) no-repeat center center;"></iframe>';
             }
 
             function replaceCushyShortcodes( content ) {
