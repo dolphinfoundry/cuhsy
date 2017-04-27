@@ -359,7 +359,7 @@ jQuery(function($) {
     })
 
     $.fn.tinyMcePluginParser = function () {
-        tinymce.PluginManager.add('cushy_card', function( editor, url ) { console.log('hello');
+        tinymce.PluginManager.add('cushy_card', function( editor, url ) {
             var sh_tag = 'cushy_card';
 
             //helper functions
@@ -379,11 +379,11 @@ jQuery(function($) {
                     imgWidth = img_wh[0];
                     imgHeight = img_wh[1];
 
-                    var editorContentWidth = $(document).find('.mce-edit-area').innerWidth();
+                    var editorContentWidth = ( $(window).width() < 1440 ) ? $(document).find('.mce-edit-area').innerWidth() * 75 / 100 : $(document).find('.mce-edit-area').innerWidth();
                     iFrameHeight = (imgHeight / imgWidth * editorContentWidth);
                     iFrameHeight = Math.round(iFrameHeight);
 
-                    if (editorContentWidth > imgWidth) { console.log('hello');
+                    if (editorContentWidth > imgWidth) {
                         iFrameWidth = imgWidth;
                         iFrameHeight = imgHeight;
                     }
