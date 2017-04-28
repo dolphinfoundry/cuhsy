@@ -14,7 +14,7 @@ jQuery(function($) {
     $this.addClass('cushy-media-modal media-modal');
     $this.find('a#add-cushy-button').html('<img src="' + pluginUrl + '/assets/cushy-logo.png" alt="add cushy" style="width:18px; margin-top: -4px;" />Add cushy');
 
-    $.fn.calculateAspectRatioFit = function(srcWidth, srcHeight, maxWidth, maxHeight) {
+    $.fn.calculateAspectRatioFit = function (srcWidth, srcHeight, maxWidth, maxHeight) {
         var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
         return {
             width: srcWidth * ratio,
@@ -22,7 +22,8 @@ jQuery(function($) {
         };
     };
 
-    $this.on('click', '#settingsSaveBtn', function() { console.log(apiBaseUrl);
+    $this.on('click', '#settingsSaveBtn', function () {
+        console.log(apiBaseUrl);
         var username = $.trim($("#username").val());
         var sec_key = $.trim($("#sec_key").val());
         if (username.length == 0) {
@@ -37,11 +38,11 @@ jQuery(function($) {
                 data: {
                     username: username
                 },
-                beforeSend: function() {
+                beforeSend: function () {
                     $('#settingsSaveBtn').attr('disabled', true);
                 },
                 dataType: "jsonp",
-                success: function(response) {
+                success: function (response) {
                     $('#settingsSaveBtn').attr('disabled', false);
                     if (response.success !== undefined && response.success == 1) {
                         $('#form').submit();
@@ -51,14 +52,14 @@ jQuery(function($) {
                         $("#error").text("Sorry!!! Username does not match");
                     }
                 },
-                error: function() {
+                error: function () {
                     alert("Error");
                 }
             });
         }
     });
 
-    $.fn.has_scrollbar = function() {
+    $.fn.has_scrollbar = function () {
         var divnode = this.get(0);
         if (divnode.scrollHeight > divnode.clientHeight)
             return true;
@@ -69,8 +70,8 @@ jQuery(function($) {
      *
      */
 
-    $.fn.fetchCushyList = function(trackPage, isSearchCleared) {
-        setTimeout(function() {
+    $.fn.fetchCushyList = function (trackPage, isSearchCleared) {
+        setTimeout(function () {
             if (loading == false) {
                 loading = true; //set loading flag on
                 var userName = $.trim($(document).find("#user_name").val());
@@ -88,14 +89,14 @@ jQuery(function($) {
                             page: trackPage,
                             search_key: searchKey
                         },
-                        beforeSend: function() {
+                        beforeSend: function () {
                             if (searchKey.length > 0 || isSearchCleared !== undefined)
                                 $.fn.searchFieldActions(true);
                             else
                                 $('.pre-loader').show();
                         },
                         dataType: "jsonp",
-                        success: function(response) { console.log(response);
+                        success: function (response) {
                             $.fn.searchFieldActions(false);
                             loading = false; //set loading flag off once the content is loading
                             $('.pre-loader').hide();
@@ -106,7 +107,7 @@ jQuery(function($) {
                                     $('#TB_window').find('.render-cushy-list').find('li').not('li.pre-loader-content').remove();
                                 }
 
-                                $.each(response.data.records, function(index, value) {
+                                $.each(response.data.records, function (index, value) {
                                     liContent = '<li tabindex="0" role="checkbox" aria-label="' + index + '" data-id="' + value.cushy_code + '" class="attachment save-ready select-item is-def-ite">' +
                                         '<div class="attachment-preview js--select-attachment type-image subtype-png landscape">' +
                                         '<div class="thumbnail cushy-lazy-bg" rel="' + value.cushy_code + '">' +
@@ -129,7 +130,7 @@ jQuery(function($) {
                                     $this.find('#TB_window').find('.render-cushy-list').append(liContent);
                                 });
 
-                                $this.find('#TB_window').find('.render-cushy-list').find("img.thumb-img").load(function() {
+                                $this.find('#TB_window').find('.render-cushy-list').find("img.thumb-img").load(function () {
                                     this.style.opacity = 1;
                                 });
 
@@ -147,7 +148,7 @@ jQuery(function($) {
                                 $this.find('.clear-selection').trigger('click');
                             }
                         },
-                        error: function() {
+                        error: function () {
                             console.log("Error fetching data");
                         }
                     });
@@ -159,7 +160,7 @@ jQuery(function($) {
     }
 
     // fetch cushy list on add cushy button trigger
-    $('#add-cushy-button').on('click', function() {
+    $('#add-cushy-button').on('click', function () {
         trackPage = 1;
         selectedItems = [];
         cushyShortCode = "";
@@ -167,27 +168,27 @@ jQuery(function($) {
     })
 
     var isSearched = false;
-    $this.on('keyup click', '.cushy-search-input', function(event) {
+    $this.on('keyup click', '.cushy-search-input', function (event) {
         var strLen = $.trim($(this).val());
         clearTimeout($.data(this, 'timer'));
         trackPage = 1;
 
         if (event.type == 'keyup' && (strLen.length > 2 || strLen.length === 0)) {
             isSearched = true;
-            $(this).data('timer', setTimeout(function() {
+            $(this).data('timer', setTimeout(function () {
                 $.fn.fetchCushyList(trackPage, isSearched);
             }, 200));
         }
 
         if (event.type == 'click' && strLen.length > 0 && isSearched) {
             isSearched = false;
-            $(this).data('timer', setTimeout(function() {
+            $(this).data('timer', setTimeout(function () {
                 $.fn.fetchCushyList(trackPage, isSearched);
             }, 200));
         }
     })
 
-    $this.on('click', '.search-close-icon', function(event) {
+    $this.on('click', '.search-close-icon', function (event) {
         //$.fn.searchFieldActions(true);
         $this.find('.cushy-search-input').val('');
         trackPage = 1;
@@ -199,14 +200,14 @@ jQuery(function($) {
             $this.find('.search-fld-btn').addClass('search-load-icon').removeClass('search-close-icon');
         }
         else {
-            if($this.find('.cushy-search-input').val().length > 0) {
+            if ($this.find('.cushy-search-input').val().length > 0) {
                 $this.find('.search-fld-btn').addClass('search-close-icon').removeClass('search-load-icon');
-            }else
+            } else
                 $this.find('.search-fld-btn').removeClass('search-load-icon search-close-icon');
         }
     }
 
-    $this.on('click', 'button#loadMoreBtn', function(e) {
+    $this.on('click', 'button#loadMoreBtn', function (e) {
         $(this).attr('disabled', true).text('Loading...');
         trackPage++;
         $('.btn-load-wrap').fadeOut();
@@ -215,7 +216,7 @@ jQuery(function($) {
 
     var isKeyPressed = false;
     var cushyShortCode = "";
-    $this.on('click', 'li.select-item', function(e) {
+    $this.on('click', 'li.select-item', function (e) {
         isKeyPressed = (e.ctrlKey || e.metaKey) ? true : false;
         var cushyId = $(this).attr('data-id');
         var isFound = $.inArray(cushyId, selectedItems);
@@ -231,7 +232,7 @@ jQuery(function($) {
 
         $this.find('li.select-item').removeClass('selected details');
         if (selectedItems.length > 0) {
-            $.each(selectedItems, function(index, value) {
+            $.each(selectedItems, function (index, value) {
                 $("[data-id='" + value + "']").addClass('selected');
             })
         }
@@ -249,8 +250,8 @@ jQuery(function($) {
             $this.find('.cushy-overview').show();
             $this.find('.attachment-info .thumbnail-image img').attr('src', cushyMedia);
             $('input.cushy-media').val(cushyMedia);
-            $('textarea.cushy-caption').val( cushyDesc.replace(/\\/g, '') );
-            $('input.cushy-loc').val( cushyLoc.replace(/\\/g, '') );
+            $('textarea.cushy-caption').val(cushyDesc.replace(/\\/g, ''));
+            $('input.cushy-loc').val(cushyLoc.replace(/\\/g, ''));
             $('input.cushy-date').val(cushyDate);
 
             var buggleTagsList = $("#cushy_tags" + cushyId).val();
@@ -271,25 +272,25 @@ jQuery(function($) {
         }
     })
 
-    $this.on('click', '.edit-selection', function() {
+    $this.on('click', '.edit-selection', function () {
         $this.find('.select-item').not('.selected').hide();
         $this.find('.media-selection, button#loadMoreBtn').hide();
         $this.find('.return-btn').show();
     })
 
-    $this.on('click', '.clear-selection', function() {
+    $this.on('click', '.clear-selection', function () {
         selectedItems = [];
         $this.find('.select-item').removeClass('selected details');
         $this.find('.media-button-insert').attr('disabled', true);
         $('.media-selection, .cushy-overview').hide();
     })
 
-    $this.on('click', '.return-btn', function() {
+    $this.on('click', '.return-btn', function () {
         $(this).hide();
         $this.find('.select-item, .media-selection, button#loadMoreBtn').show();
     })
 
-    $(document).on('click', '.thumbnail', function() {
+    $(document).on('click', '.thumbnail', function () {
         $('body').removeClass('active-cushy');
         $(this).addClass('active-cushy');
     })
@@ -298,13 +299,13 @@ jQuery(function($) {
         setTimeout(function () {
             var $head = $("#content_ifr").contents().find("head");
             $head.append($("<link/>",
-                { rel: "stylesheet", href: pluginUrl + '/css/cushy-override.css', type: "text/css" }
+                {rel: "stylesheet", href: pluginUrl + '/css/cushy-override.css', type: "text/css"}
             ));
         }, 1);
     }
 
     var sh_tag = 'cushy_card';
-    $(document).on('click', '.media-button-insert', function() {
+    $(document).on('click', '.media-button-insert', function () {
         if (selectedItems.length > 0) {
             $(this).attr('disabled', false);
             $.each(selectedItems, function (index, value) {
@@ -333,7 +334,7 @@ jQuery(function($) {
         }
     })
 
-    $(document).on('click', '.media-modal-close', function() {
+    $(document).on('click', '.media-modal-close', function () {
         trackPage = 1;
         selectedItems = [];
         cushyShortCode = "";
@@ -345,81 +346,84 @@ jQuery(function($) {
         });
     })
 
-    $.fn.tinyMcePluginParser = function () {
-        tinymce.PluginManager.add('cushy_card', function( editor, url ) {
-            var sh_tag = 'cushy_card';
+    if (typeof(tinyMCE) != "undefined") {
+        if (tinyMCE.activeEditor == null || tinyMCE.activeEditor.isHidden() != false) {
+            $.fn.tinyMcePluginParser = function () {
+                tinymce.PluginManager.add('cushy_card', function (editor, url) {
+                    var sh_tag = 'cushy_card';
 
-            //helper functions
-            function getCushyAttr(s, n) {
-                n = new RegExp(n + '=\"([^\"]+)\"', 'g').exec(s);
-                return n ?  window.decodeURIComponent(n[1]) : '';
-            };
+                    //helper functions
+                    function getCushyAttr(s, n) {
+                        n = new RegExp(n + '=\"([^\"]+)\"', 'g').exec(s);
+                        return n ? window.decodeURIComponent(n[1]) : '';
+                    };
 
-            function cushyHtml(cls, data ,con) {
-                var cushyCode = getCushyAttr(data,'id');
-                var imgWH = getCushyAttr(data,'img_data');
-                var img_wh = imgWH.split("x");
-                var iFrameWidth = 0;
-                var iFrameHeight = 0;
+                    function cushyHtml(cls, data, con) {
+                        var cushyCode = getCushyAttr(data, 'id');
+                        var imgWH = getCushyAttr(data, 'img_data');
+                        var img_wh = imgWH.split("x");
+                        var iFrameWidth = 0;
+                        var iFrameHeight = 0;
 
-                if (img_wh !== undefined && img_wh[0] !== undefined) {
-                    imgWidth = img_wh[0];
-                    imgHeight = img_wh[1];
+                        if (img_wh !== undefined && img_wh[0] !== undefined) {
+                            imgWidth = img_wh[0];
+                            imgHeight = img_wh[1];
 
-                    var editorContentWidth = ( $(window).width() < 1440 ) ? $(document).find('.mce-edit-area').innerWidth() * 75 / 100 : $(document).find('.mce-edit-area').innerWidth();
-                    iFrameHeight = (imgHeight / imgWidth * editorContentWidth);
-                    iFrameHeight = Math.round(iFrameHeight);
+                            var editorContentWidth = ( $(window).width() < 1440 ) ? $(document).find('.mce-edit-area').innerWidth() * 75 / 100 : $(document).find('.mce-edit-area').innerWidth();
+                            iFrameHeight = (imgHeight / imgWidth * editorContentWidth);
+                            iFrameHeight = Math.round(iFrameHeight);
 
-                    if (editorContentWidth > imgWidth) {
-                        iFrameWidth = imgWidth;
-                        iFrameHeight = imgHeight;
+                            if (editorContentWidth > imgWidth) {
+                                iFrameWidth = imgWidth;
+                                iFrameHeight = imgHeight;
+                            }
+                            else {
+                                iFrameWidth = editorContentWidth;
+                            }
+
+                            //console.log( editorContentWidth + '---'+ iframeHeight );
+
+                            data = window.encodeURIComponent(data);
+                            content = window.encodeURIComponent(con);
+
+                            $(document).find('.mce-preview-object').css('display', 'none');
+
+                            return '<iframe src="' + apiBaseUrl + '/sections/view/' + cushyCode + '" width="' + iFrameWidth + '" height="' + iFrameHeight + '" class="mceItem ' + cls + '" data-sh-attr="' + data + '" data-sh-content="' + con + '" frameborder="0" style="width: ' + iFrameWidth + 'px; height: ' + iFrameHeight + 'px; max-width: ' + iFrameWidth + 'px; max-height: ' + iFrameHeight + 'px; background: #D8D8D8 url(' + pluginUrl + '/assets/loader.png) no-repeat center center;"></iframe>';
+                        }
                     }
-                    else {
-                        iFrameWidth = editorContentWidth;
+
+                    function replaceCushyShortcodes(content) {
+                        return content.replace(/\[cushy_card([^\]]*)\]/g, function (all, attr, con) {
+                            return cushyHtml('wp-' + sh_tag, attr, con);
+                        });
                     }
 
-                    //console.log( editorContentWidth + '---'+ iframeHeight );
+                    function restoreCushyShortcodes(content) {
+                        return content.replace(/(<iframe.*?>.*?<\/iframe>)/g, function (match, image) {
+                            var data = getCushyAttr(image, 'data-sh-attr');
+                            var con = getCushyAttr(image, 'data-sh-content');
 
-                    data = window.encodeURIComponent( data );
-                    content = window.encodeURIComponent( con );
+                            if (data) {
+                                return '<p>[' + sh_tag + data + ']</p>';
+                            }
 
-                    $(document).find('.mce-preview-object').css('display', 'none');
+                            return match;
+                        });
+                    }
 
-                    return '<iframe src="'+ apiBaseUrl + '/sections/view/'+ cushyCode +'" width="'+ iFrameWidth +'" height="'+ iFrameHeight +'" class="mceItem ' + cls + '" data-sh-attr="' + data + '" data-sh-content="'+ con+'" frameborder="0" style="width: '+ iFrameWidth +'px; height: '+ iFrameHeight +'px; max-width: '+ iFrameWidth +'px; max-height: '+ iFrameHeight +'px; background: #D8D8D8 url(' + pluginUrl + '/assets/loader.png) no-repeat center center;"></iframe>';
-                }
-            }
+                    editor.on('BeforeSetcontent', function (event) {
+                        event.content = replaceCushyShortcodes(event.content);
+                    });
 
-            function replaceCushyShortcodes( content ) {
-                return content.replace( /\[cushy_card([^\]]*)\]/g, function( all,attr,con) {
-                    return cushyHtml( 'wp-'+sh_tag, attr , con);
+                    editor.on('GetContent', function (event) {
+                        event.content = restoreCushyShortcodes(event.content);
+                    });
+
+                    $.fn.removeIframeMargin();
                 });
             }
 
-            function restoreCushyShortcodes( content ) {
-                return content.replace( /(<iframe.*?>.*?<\/iframe>)/g, function( match, image ) {
-                    var data = getCushyAttr( image, 'data-sh-attr' );
-                    var con = getCushyAttr( image, 'data-sh-content' );
-
-                    if ( data ) {
-                        return '<p>[' + sh_tag + data + ']</p>';
-                    }
-
-                    return match;
-                });
-            }
-
-            editor.on('BeforeSetcontent', function(event){
-                event.content = replaceCushyShortcodes( event.content );
-            });
-
-            editor.on('GetContent', function(event){
-                event.content = restoreCushyShortcodes(event.content);
-            });
-
-            $.fn.removeIframeMargin();
-        });
+            $.fn.tinyMcePluginParser();
+        }
     }
-
-    // Load the iframe on page ready
-    $.fn.tinyMcePluginParser();
-);
+});
