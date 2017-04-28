@@ -76,7 +76,6 @@ jQuery(function($) {
                 var userName = $.trim($(document).find("#user_name").val());
                 var seckey = $.trim($(document).find("#sec_key").val());
                 var searchKey = $.trim($(document).find('#media-search-input').val());
-                //console.log(userName +'___'+seckey);
 
                 $('#TB_window').addClass('cushyTBWindow');
                 if (userName !== "" && seckey !== "") {
@@ -207,7 +206,6 @@ jQuery(function($) {
         }
     }
 
-
     $this.on('click', 'button#loadMoreBtn', function(e) {
         $(this).attr('disabled', true).text('Loading...');
         trackPage++;
@@ -257,18 +255,7 @@ jQuery(function($) {
 
             var buggleTagsList = $("#cushy_tags" + cushyId).val();
             if (buggleTagsList !== "") {
-                /*tags = tagsList.split(',');
-                 if (tags.length >1) {
-                 var tagsElm = '<ul class="tags-list">';
-                 for(var i=0; i<tags.length; i++) {
-                 tagsElm += '<li>' + tags[i] + '</li>';
-                 }
-                 tagsElm += '</ul>';
-                 $('.tags-block').css('display', 'block').find('.cushy-tags').html(tagsElm);
-                 //console.log(tagsElm);
-                 } */
                 $('.tags-block').css('display', 'block').find('.cushy-tags').html(buggleTagsList);
-
             }
             else $('.tags-block').css('display', 'none').find('.cushy-tags').html('');
 
@@ -425,7 +412,6 @@ jQuery(function($) {
                 event.content = replaceCushyShortcodes( event.content );
             });
 
-
             editor.on('GetContent', function(event){
                 event.content = restoreCushyShortcodes(event.content);
             });
@@ -436,5 +422,4 @@ jQuery(function($) {
 
     // Load the iframe on page ready
     $.fn.tinyMcePluginParser();
-
-});
+);
