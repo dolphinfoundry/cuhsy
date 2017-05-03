@@ -288,7 +288,7 @@ function cushy_settings() {
 
             $username = sanitize_text_field( $_POST['username'] );
             $sec_key = sanitize_text_field( $_POST['sec_key'] );
-            $blog_url = sanitize_text_field( $_POST['blog_url'] );
+            $blog_url = esc_url( $_POST['blog_url'] );
 
             if ( strlen( $username ) > 40 ) {
                 $username = substr( $username, 0, 40 );
