@@ -1,7 +1,7 @@
 jQuery(function($) {
     var isDebug = false;
-    var endpoint = (isDebug) ? 'dev.cushy.com' : 'cushy.com';
-    var apiBaseUrl = 'https://' + endpoint;
+    var endpoint = (isDebug) ? 'localhost/cushy_prod_web' : 'cushy.com';
+    var apiBaseUrl = 'http://' + endpoint;
     var $this = $(document);
     var pluginUrl = $this.find('input#pluginPath').val();
     var trackPage = 1;
@@ -107,25 +107,29 @@ jQuery(function($) {
                                     $('#TB_window').find('.render-cushy-list').find('li').not('li.pre-loader-content').remove();
                                 }
 
+                                var lgImgUrl = thumbUrl = '';
                                 $.each(response.data.records, function (index, value) {
-                                    liContent = '<li tabindex="0" role="checkbox" aria-label="' + index + '" data-id="' + value.cushy_code + '" class="attachment save-ready select-item is-def-ite">' +
-                                        '<div class="attachment-preview js--select-attachment type-image subtype-png landscape">' +
-                                        '<div class="thumbnail cushy-lazy-bg" rel="' + value.cushy_code + '">' +
-                                        '<div class="centered">' +
-                                        '<img class="thumb-img" src="' + value.media_thumb.url + '" draggable="false" alt="N/A">' +
-                                        '</div>' +
-                                        '</div>' +
-                                        '</div>' +
-                                        '<button type="button" class="button-link check" tabindex="0"><span class="media-modal-icon"></span><span class="screen-reader-text">Deselect</span></button>' +
-                                        '<input type="hidden" id="cushy_id' + value.cushy_code + '" name="cushy_id[]" value="' + value.cushy_code + '">' +
-                                        '<input type="hidden" id="cushy_view_url' + value.cushy_code + '" name="cushy_view_url[]" value="' + value.view_url + '">' +
-                                        '<input type="hidden" id="cushy_media' + value.cushy_code + '" name="cushy_media[]" value="' + value.media_large.url + '">' +
-                                        '<input type="hidden" id="cushy_desc' + value.cushy_code + '" name="cushy_desc[]" value="' + value.description + '">' +
-                                        '<input type="hidden" id="cushy_loc' + value.cushy_code + '" name="cushy_loc[]" value="' + value.location_name + '">' +
-                                        '<input type="hidden" id="cushy_date' + value.cushy_code + '" name="cushy_date[]" value="' + value.cushy_time + '">' +
-                                        '<input type="hidden" id="cushy_tags' + value.cushy_code + '" name="cushy_tags[]" value="' + value.tags + '">' +
-                                        '<input type="hidden" id="cushy_img_data' + value.cushy_code + '" name="cushy_img_data[]" value="' + value.media_large.width + 'x' + value.media_large.height + '">'
-                                    '</li>';
+                                lgImgUrl = (value.media_large !== undefined) ? value.media_large.url : "";
+                                thumbUrl = (value.media_thumb !== undefined) ? value.media_thumb.url : "";
+
+                                liContent = '<li tabindex="0" role="checkbox" aria-label="' + index + '" data-id="' + value.cushy_code + '" class="attachment save-ready select-item is-def-ite">' +
+                                    '<div class="attachment-preview js--select-attachment type-image subtype-png landscape">' +
+                                    '<div class="thumbnail cushy-lazy-bg" rel="' + value.cushy_code + '">' +
+                                    '<div class="centered">' +
+                                    '<img class="thumb-img" src="' + thumbUrl + '" draggable="false" alt="N/A">' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '<button type="button" class="button-link check" tabindex="0"><span class="media-modal-icon"></span><span class="screen-reader-text">Deselect</span></button>' +
+                                    '<input type="hidden" id="cushy_id' + value.cushy_code + '" name="cushy_id[]" value="' + value.cushy_code + '">' +
+                                    '<input type="hidden" id="cushy_view_url' + value.cushy_code + '" name="cushy_view_url[]" value="' + value.view_url + '">' +
+                                    '<input type="hidden" id="cushy_media' + value.cushy_code + '" name="cushy_media[]" value="' + lgImgUrl + '">' +
+                                    '<input type="hidden" id="cushy_desc' + value.cushy_code + '" name="cushy_desc[]" value="' + value.description + '">' +
+                                    '<input type="hidden" id="cushy_loc' + value.cushy_code + '" name="cushy_loc[]" value="' + value.location_name + '">' +
+                                    '<input type="hidden" id="cushy_date' + value.cushy_code + '" name="cushy_date[]" value="' + value.cushy_time + '">' +
+                                    '<input type="hidden" id="cushy_tags' + value.cushy_code + '" name="cushy_tags[]" value="' + value.tags + '">' +
+                                    '<input type="hidden" id="cushy_img_data' + value.cushy_code + '" name="cushy_img_data[]" value="' + value.media_large.width + 'x' + value.media_large.height + '">'
+                                '</li>';
 
                                     $this.find('#TB_window').find('.render-cushy-list').append(liContent);
                                 });

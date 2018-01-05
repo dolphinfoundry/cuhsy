@@ -44,7 +44,7 @@ class cushy_shortcode{
                         <iframe id="' . esc_attr($atts['id']) . '" class="cushy-iframe embed-responsive-item" src="' . esc_url(CUSHY_WP_BASE_URL . '/sections/view/' . $atts['id']) . '" frameborder="0" allowfullscreen style="background-color: #F8F8F8; height: 100%; width: calc(100%);"></iframe>
                         </div>';
             $cushy_card .= '<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>';
-            $cushy_card .= '<script src="' . esc_js(CUSHY_WP_PLUGIN_URL . 'js/cushy.min.js?v=' . time()) . '"></script>';
+            $cushy_card .= '<script src="' . esc_js(CUSHY_WP_PLUGIN_URL . 'js/cushy.js?v=' . time()) . '"></script>';
             $cushy_card .= '<script>
                            /*** Set Iframe aspect ratio on initiazlise ***/
                            $.fn.initIframeContent = function(imgWidth, imgHeight, sectionWidth) {
@@ -162,7 +162,7 @@ register_deactivation_hook(__FILE__, 'cushy_remove_settings_table');
 /* External file includes */
 function cushy_include_files() {
     wp_enqueue_style('cushy', CUSHY_WP_PLUGIN_URL . 'css/cushy.min.css', false, '1.0' . time());
-    wp_enqueue_script('cushy', CUSHY_WP_PLUGIN_URL . 'js/cushy.min.js', array(), '1.0.' . time(), true);
+    wp_enqueue_script('cushy', CUSHY_WP_PLUGIN_URL . 'js/cushy.js', array(), '1.0.' . time(), true);
 }
 
 /* Add cushy settings to menu */
